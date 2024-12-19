@@ -1,0 +1,76 @@
+#!/opt/pwn.college/python
+import sys
+import os
+import re
+import random
+import string
+
+def generate_cipher_key():
+    """Generate a random substitution cipher key."""
+    alphabet = list(string.ascii_uppercase)
+    shuffled = alphabet[:]
+    random.shuffle(shuffled)
+    return dict(zip(alphabet, shuffled))
+
+def print_flag():
+    try:
+        with open("/flag", "r") as f:
+            print(f.read())
+    except FileNotFoundError:
+        print("Error: Flag file not found.")
+
+# Main function to execute the cipher game
+def play_cipher_game():
+    print("Welcome to the Substitution Cipher Encrypter!")
+    word_list = [
+        "Blue",
+        "Gray",
+        "Pink",
+        "Green",
+        "Brown",
+        "Gold",
+        "Lime",
+        "Cyan",
+        "Peach",
+        "Black",
+        "Red",
+        "White",
+        "Purple",
+        "Tan",
+        "Olive"
+    ]
+
+    word_to_encode = random.choice(word_list).upper()
+
+    print(f"Your task is to encrypt this word: {word_to_encode}")
+    print("You can use this substitution cipher key to help you!\n")
+    cipher_key = generate_cipher_key()
+    original_alphabet = ' '.join(string.ascii_uppercase)
+    cipher_alphabet = ' '.join(cipher_key[char].upper() for char in string.ascii_uppercase)
+    print(f"   Original: {original_alphabet}")
+    print(f"Substituted: {cipher_alphabet}")
+    print("\nEach letter in the top row is substituted by the corresponding letter below it in the bottom row.")
+
+    print("\nLet's encrypt the word character by character!")
+    encoded_word = []
+
+    for char in word_to_encode:
+        if char in cipher_key:
+            while True:
+                user_input = input(f"Encrypt this character - {char}: ").upper() 
+                if user_input == cipher_key[char]:
+                    print("Correct!")
+                    encoded_word.append(user_input)
+                    break
+                else:
+                    print("Incorrect. Try again.")
+        else:
+            print(f"The character \"{char}\" is not in the cipher key and will be skipped.")
+
+    encoded_result = ''.join(encoded_word)
+
+    print(f"\nCongratulations, you encrypted it correctly! Once encrypted, {word_to_encode} becomes {encoded_result}.")
+    print_flag()
+
+# Run the game
+play_cipher_game()

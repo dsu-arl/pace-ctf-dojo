@@ -1,0 +1,84 @@
+#!/opt/pwn.college/python
+import sys
+import os
+import re
+import random
+import string
+
+def generate_cipher_key():
+    """Generate a random substitution cipher key."""
+    alphabet = list(string.ascii_uppercase)
+    shuffled = alphabet[:]
+    random.shuffle(shuffled)
+    return dict(zip(alphabet, shuffled))
+
+def print_flag():
+    try:
+        with open("/flag", "r") as f:
+            print(f.read())
+    except FileNotFoundError:
+        print("Error: Flag file not found.")
+
+# Main function to execute the cipher game
+def play_cipher_game():
+    print("Welcome to the Substitution Cipher Decrypter!")
+    word_list = [
+        "Blue",
+        "Gray",
+        "Pink",
+        "Green",
+        "Brown",
+        "Gold",
+        "Lime",
+        "Cyan",
+        "Peach",
+        "Black",
+        "Red",
+        "White",
+        "Purple",
+        "Tan",
+        "Olive"
+    ]
+
+    word_to_decode = random.choice(word_list).upper()
+
+    cipher_key = generate_cipher_key()
+
+    # Reverse the cipher key for decryption
+    reverse_cipher_key = {v: k for k, v in cipher_key.items()}
+
+    # Encode the word using the cipher key for the game
+    encoded_word = ''.join(cipher_key[char] for char in word_to_decode)
+
+    print(f"Your task is to decrypt this word: {encoded_word}")
+    print("You can use this substitution cipher key to help you!\n")
+    original_alphabet = ' '.join(string.ascii_uppercase)
+    cipher_alphabet = ' '.join(cipher_key[char].upper() for char in string.ascii_uppercase)
+    print(f"   Original: {original_alphabet}")
+    print(f"Substituted: {cipher_alphabet}")
+    print("\nEach letter in the top row is substituted by the corresponding letter below it in the bottom row.")
+
+    print("\nLet's decrypt the word character by character!")
+    decoded_word = []
+
+    for char in encoded_word:
+        if char in reverse_cipher_key:
+            while True:
+                user_input = input(f"Decrypt this character - {char}: ").upper()
+                if user_input == reverse_cipher_key[char]:
+                    print("Correct!")
+                    decoded_word.append(user_input)
+                    break
+                else:
+                    print("Incorrect. Try again.")
+        else:
+            print(f"The character \"{char}\" is not in the cipher key and will be skipped.")
+
+    decoded_result = ''.join(decoded_word)
+
+    print(f"\nCongratulations, you decrypted it correctly! Once decoded, {encoded_word} becomes {decoded_result}.")
+    print_flag()
+
+# Run the game
+play_cipher_game()
+
