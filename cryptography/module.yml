@@ -12,3 +12,9 @@ challenges:
 - id: caesar-cipher-brute-force
   name: Caesar Cipher Brute Force
   allow_privileged: false
+- id: substitution-cipher-encryption
+  name: Substitution Cipher Encryption
+  allow_privileged: false
+- id: substitution-cipher-decryption
+  name: Substitution Cipher Decryption
+  allow_privileged: false
