@@ -4,8 +4,19 @@ Use this template to make new dojos!
 
 ## Before running `manage_dojo.py` for first time
 ```commandline
-pip install inquirerpy
-pip install PyYAML
+python3 -m venv env
+source env/bin/activate
+pip install -r requirements.txt
+```
+
+## When finished using `manage_dojo.py`
+```commandline
+deactivate
+```
+
+## To get back into the `manage_dojo.py` python virtual environment
+```commandline
+source env/bin/activate
 ```
 
 ## Dojo YAML File
