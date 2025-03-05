@@ -1,0 +1,204 @@
+#!/opt/pwn.college/python
+import sys
+sys.path.append('/challenge')
+
+
+
+def print_flag():
+	try:
+		with open("/flag", "r") as f:
+			print(f.read())
+	except FileNotFoundError:
+		print("Error: Flag file not found.")
+
+# Add your imports and other code below here
+
+try:
+	from Crypto.Cipher import DES
+	from os import urandom
+	from hashlib import md5
+
+except Exception as e:
+	print(e)
+	print("\nPlease run tool using the command: \n./verify (or <path_to_verify>) \nor \npython3.8 <path_to_verify>")
+
+
+# simulate 1 round of DES block mode
+def xor_bytes() -> bytes:
+	data = ''
+	while(len(data) == 0):
+		data = input("Enter data to be XORed formatted as hex.\nExample:  <0x1122334455667788> OR <1122334455667788>\n> ").replace("0x","")
+		try:
+			data = bytes.fromhex(data)
+		except Exception as e:
+			print(e)
+			data = ''
+			print("Error reading value.")
+	
+	key = ''
+	while(len(key) != 8):
+		key = input("Enter 8-byte key formatted as hex.\nExample:  <0x1122334455667788> OR <1122334455667788>\n> ").replace("0x","")
+		try:
+			key = bytes.fromhex(key)
+			if(len(key) != 8):
+				raise Exception("Key must be 8 bytes long.")
+		except Exception as e:
+			print(e)
+			key = ''
+			print("Error reading value.")
+
+
+	key_repeated = (key * (len(data) // len(key) + 1))[:len(data)]
+	result = bytes(a ^ b for a, b in zip(data, key_repeated))
+
+	resultStr = result
+	try:
+		resultStr = result.decode("utf-8")
+	except:
+		pass
+	print("\nRESULT (hex): ", result.hex(), "\n\nRESULT (raw): ", result, "\n")
+
+# sets iv and key for DES objects for encryption/decryption
+def getDesCipher():
+	iv = ''
+	while(len(iv) != 8):
+		iv = input("Enter 8-byte IV formatted as hex.\nExample:  <0x1122334455667788> OR <1122334455667788>\nDefault: 0x1337c0deb33fc0de\n> ").replace("0x","")
+		if(iv == ''):
+			iv = bytes.fromhex("1337c0deb33fc0de")
+			break
+		try:
+			iv = bytes.fromhex(iv)
+			if(len(iv) != 8):
+				raise Exception("IV must be 8 bytes long.")
+		except Exception as e:
+			# print(iv)
+			print(e)
+			iv = ''
+			print("Error reading value.")
+
+	key = ''
+	inp = ''
+	while (inp != 'y' and inp != 'n'):
+		inp = input("\nBy default, this tool randomly generates a key.\nWould you like to manually enter a key instead?(Y/N)?\n> ").lower()
+
+	if(inp == 'y'):
+		while(len(key) != 8):
+			key = input("Please be sure to use a STRONG key. Enter 8-byte key formatted as hex.\nExample:  <0x1122334455667788> OR <1122334455667788>\n> ").replace("0x","")
+			try:
+				key = bytes.fromhex(key)
+				if(len(key) != 8):
+					raise Exception("Key must be 8 bytes long.")
+			except Exception as e:
+				print(e)
+				key = ''
+				print("Error reading value.")
+
+	else: 
+		key = urandom(8)
+
+
+	print(f"\nIV and Key set:\nIV: {iv.hex()}\nKey: {key.hex()}\n")
+	desEnc = DES.new(key, DES.MODE_OFB, iv)
+	desDec = DES.new(key, DES.MODE_OFB, iv)
+	return desEnc, desDec
+
+# encrypt a message
+def getCiphertext(des):
+	pText = ''
+	while(pText == ''):
+		pText = input("Enter plaintext formatted as a normal string.\nExample:  <This is my message!>\n> ")
+		try:
+			pText = pText.encode("utf-8")
+		except Exception as e:
+			# print(iv)
+			print(e)
+			pText = ''
+			print("Error reading plaintext.")
+	
+	cText = des.encrypt(pText)
+
+	print("\nEncrypted message (hex): ", cText.hex())
+
+# decrypt a m essage
+def getPlaintext(des):
+	ctext = ''
+	while(len(ctext) == 0):
+		ctext = input("Enter ciphertext formatted as hex.\nExample:  <0x1122334455667788> OR <1122334455667788>\n> ").replace("0x","")
+		try:
+			ctext = bytes.fromhex(ctext)
+		except Exception as e:
+			print(e)
+			ctext = ''
+			print("Error reading value.")
+
+	try: 
+		ptext = des.decrypt(ctext)
+		try:
+			ptext = ptext.decode("utf-8")
+		except:
+			pass
+		print("\nPlaintext: ", ptext)
+	except Exception as e:
+		print(e)
+		print("Error during encryption.")
+	
+
+
+desEnc = None
+desDec = None
+while(True):
+	if(desEnc != None and desDec != None):
+		desStr = "DES initialized!"
+	else:
+		desStr = "DES not initialized. Please set Key and IV."
+
+	choice = input(f"""Choose an option:
+
+
+1) Set Key and IV for DES 
+2) Encrypt plaintext using DES ({desStr})
+3) Decrypt ciphertext using DES ({desStr})
+4) Simulate 1 round of DES encryption using a custom key and IV
+5) <CHALLENGE> Submit answer
+6) Quit\n\n> """)
+
+	if(choice == '1'):
+		desEnc,desDec = getDesCipher()
+
+
+
+	elif(choice == '2'):
+		if(desEnc == None):
+			print("Please initialize DES!")
+			continue
+		else:
+			getCiphertext(desEnc)
+
+	elif(choice == '3'):
+		if(desDec == None):
+			print("Please initialize DES!")
+			continue
+		else:
+			getPlaintext(desDec)
+
+
+	elif(choice == '4'):
+		xor_bytes()
+
+	elif(choice == '5'):
+		answer = input("Please copy-paste the entire decoded message from Alice. (Leading/trailing whitespace is not important)\n>").strip()
+		ansHash = md5(answer.encode()).digest().hex()
+
+		# md5sum of alice's msg
+		if(ansHash == "12dfd062638b9765191bf14fbf8b013f"):
+			print_flag()
+			break
+		else:
+			print("\nSorry, incorrect!\n")
+
+	elif(choice == '6'):
+		print("Goodbye!")
+		break
+	else:
+		print("Invalid choice.")
+

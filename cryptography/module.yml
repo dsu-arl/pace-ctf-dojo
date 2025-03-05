@@ -18,3 +18,6 @@ challenges:
 - id: substitution-cipher-decryption
   name: Substitution Cipher Decryption
   allow_privileged: false
+- id: questionable-des
+  name: Questionable DES
+  allow_privileged: false
