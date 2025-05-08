@@ -1,0 +1,99 @@
+#!/opt/pwn.college/python
+from flask import Flask, request
+
+app = Flask(__name__)
+with open("/flag", "r") as fObj:
+    flag = fObj.read()
+
+wrong_agent = '<p>Wrong user agent!</p>\n'
+example_website = """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple News Website</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <h1>Daily News</h1>
+            <p>Breaking News from Around the World</p>
+        </div>
+    </header>
+
+    <!-- Navigation Section -->
+    <nav>
+        <div class="container">
+            <a href="#">Home</a>
+            <a href="#">World</a>
+            <a href="#">Politics</a>
+            <a href="#">Business</a>
+            <a href="#">Technology</a>
+            <a href="#">Entertainment</a>
+            <a href="#">Sports</a>
+            <a href="#">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Main Content Section -->
+    <main class="container">
+        <!-- Main Article Section -->
+        <section class="content">
+            <article>
+                <h2>Breaking: Major Event Unfolding</h2>
+                <p>Posted on November 8, 2024</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla porttitor eros ac lorem ultrices, at fermentum est pulvinar.</p>
+            </article>
+
+            <article>
+                <h2>Local Community Rallies for Change</h2>
+                <p>Posted on November 8, 2024</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus in libero nec metus efficitur suscipit.</p>
+            </article>
+        </section>
+
+        <!-- Sidebar Section -->
+        <aside class="sidebar">
+            <h3>Latest News</h3>
+            <ul>
+                <li><a href="#">Top Story: Market Update</a></li>
+                <li><a href="#">Technology: New Breakthrough</a></li>
+                <li><a href="#">Entertainment: Movie Premiere</a></li>
+                <li><a href="#">Health: Tips for Wellness</a></li>
+            </ul>
+
+            <h3>Categories</h3>
+            <ul>
+                <li><a href="#">World</a></li>
+                <li><a href="#">Politics</a></li>
+                <li><a href="#">Business</a></li>
+                <li><a href="#">Technology</a></li>
+            </ul>
+        </aside>
+    </main>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Daily News. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>"""
+
+def correct_user_agent(agent) -> bool:
+    if 'python-requests' in agent:
+        return True
+    return False
+
+@app.route("/")
+def requests_two():
+    if not correct_user_agent(request.headers.get('User-Agent')):
+        return wrong_agent
+    return example_website.replace('<h2>Breaking: Major Event Unfolding</h2>', f'<h2>{flag}</h2>')
+
+app.run("challenge.localhost", 80)

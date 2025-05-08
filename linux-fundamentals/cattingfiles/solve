@@ -1,0 +1,78 @@
+#!/opt/pwn.college/python
+import stat
+import random
+from os import chmod
+from os.path import exists
+
+def setup_game():
+    # Create file with randomly generated password
+    random_words = [
+        "brisk", "jumpy", "zesty", "livid", "quirk", "mango", "fluff", "gleam", "bliss", "vivid",
+        "prong", "crisp", "swoon", "pluck", "charm", "smirk", "witty", "glide", "sprig", "whirl",
+        "buzzy", "clamp", "swift", "glee", "jolly", "flick", "brawn", "slink", "twist", "clink",
+        "spark", "bloom", "frisk", "flair", "knack", "scamp", "quirk", "flash", "jumpy", "brine",
+        "snare", "sweep", "frost", "shard", "prick", "flock", "grind", "creek", "gleam", "brisk",
+        "pluck", "swoop", "snare", "clash", "slink", "blaze", "crisp", "flick", "glee", "tweak",
+        "latch", "shirk", "blurb", "chirp", "whizz", "glint", "trill", "swoop", "quirk", "whisk",
+        "gleam", "gruff", "spunk", "flair", "smirk", "brisk", "swift", "twirl", "grind", "brash",
+        "slick", "gloss", "whirl", "fizz", "clink", "knack", "pluck", "snarl", "frizz", "whisk",
+        "scuff", "twinge", "spurt", "chime", "bliss", "frisk", "twist", "smirk", "shard", "clamp"
+    ]
+
+    passphrase = f"{random.choice(random_words)}_{random.choice(random_words)}_{random.choice(random_words)}\n"
+
+    # Write file
+    with open('/tmp/super_secret_password', 'w') as fObj:
+        fObj.write(passphrase)
+
+    # Give file proper perms 
+    chmod('/tmp/super_secret_password', stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
+
+    return
+     
+
+
+def main():
+
+    # Check if we need to create proper file
+    if not exists('/tmp/super_secret_password'):
+        setup_game()
+        print("""
+        On a normal desktop, when you want to view the content
+        of a file, you normally just double click it. However,
+        in the terminal, we can't use our mouse!
+
+        In order to view the contents of a file, we need to use
+        the 'cat' command. 'cat' is short for 'concatenate' which
+        means were linking things together. Here, we're linking
+        the file contents with our terminal output.
+
+        To view the content of a file, you use the following
+        syntax:
+
+            'cat {filename}'
+
+        For this challenge, you must view the contents of the
+        file 'super_secret_password' located in the /tmp
+        directory.
+
+        Copy the content from the file and then run '/challenge/solve'
+        again and supply the passphrase to get your flag!
+
+        """)
+        return
+
+    with open('/tmp/super_secret_password', 'r') as fObj:
+        phrase = fObj.read().strip()
+
+    ans = input("Please enter the passphrase contained in the file: ")
+    if ans.strip() == phrase:
+        print("Congratulations! Here is your flag!")
+        with open('/flag', 'r') as fObj:
+            print(fObj.read())
+    else:
+        print("Sorry, that was incorrect!")
+
+if __name__ == "__main__":
+    main()
+

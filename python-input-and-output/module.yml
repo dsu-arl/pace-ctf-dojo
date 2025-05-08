@@ -1,0 +1,12 @@
+name: Python Input and Output
+challenges:
+  - id: printing
+    name: Printing Text
+  - id: variables
+    name: Variables
+  - id: format-print
+    name: Format Printing
+  - id: user-input
+    name: User Input
+  - id: type-casting
+    name: Type Casting

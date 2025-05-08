@@ -1,0 +1,63 @@
+#!/opt/pwn.college/python
+# Magic 8 Ball server!
+import random
+import socket
+from time import sleep
+
+def main():
+
+    response = [
+            'It is certain.', 
+            'Outlook not so good.', 
+            'Ask again later.',
+            'Better not tell you now.',
+            'Cannot predict now.',
+            'Concentrate and ask again.',
+            'Don\'t count on it.',
+            'My reply is no.',
+            'My sources say no.',
+            'Very doubtful.',
+    ]
+
+    bind_addr = ('127.0.0.1', 1337)
+
+    serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    serv.bind(bind_addr)
+    serv.listen(3)
+
+    while True:
+        client, addr = serv.accept()
+        client.send('Welcome to Magic 8-Ball Online!\n\nAsk me a question.'.encode())
+
+        q = client.recv(2048).decode('utf-8')
+
+        if 'flag' in q.lower():
+            print("Thinking deeply...")
+            sleep(random.randint(3,6))
+            with open('/flag', 'r') as fObj:
+                flag = fObj.read().strip()
+                client.send(f"Did you say flag? Here you go!\n{flag}".encode())
+            print("Flag sent.")
+            break
+        elif q[-1] == '?':
+            print("Thinking deeply...")
+            sleep(random.randint(3,6))
+            client.send(random.choice(response).encode())
+            print("Answer sent.")
+        elif q[-1] == '?' and (q.lower() == 'what\'s the answer to life, the universe, and everything?' or q.lower() == 'what is the answer to life, the universe, and everything?'):
+            print("Thinking deeply...")
+            sleep(random.randint(2,4))
+            client.send("42.".encode())
+            print("Answer sent. I'm spent. Goodbye.")
+            break
+        else:
+            print("Thinking deeply...")
+            sleep(random.randint(2,5))
+            client.send("Was that a question?".encode())
+            print("Answer sent.")
+
+        client.close()
+    
+
+if __name__ == "__main__":
+    main()

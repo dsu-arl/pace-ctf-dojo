@@ -1,0 +1,46 @@
+#!/opt/pwn.college/python
+import sys
+import os
+import re
+
+sys.path.append('/challenge')
+from pacePythonTester import ExecutionAgent as ex
+
+def print_flag():
+    try:
+        with open("/flag", "r") as f:
+            print(f.read())
+    except FileNotFoundError:
+        print("Error: Flag file not found.")
+
+def run_and_check_script(user_script_path):
+
+    for a,b in [(12,3),(200,30),(83,42)]:
+        answer = str(a//b)
+
+        # Run their program with the test case
+        try:
+            stdout, stderr = ex.run(user_script_path, input=f"{a}\n{b}\n")
+        except TypeError as e:
+            """ Issue with noneType return """
+            print("Error:", e)
+            exit()
+
+        if '.' in stdout.strip():
+            print("Error: Floor division should result in an integer not a float!")
+            exit()
+
+        if not stdout.strip().endswith(answer):
+            print(f"Error: Make sure that you are using floor division correctly! //")
+            exit()
+
+    print_flag()
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: run <user_script.py>")
+        sys.exit(1)
+
+    user_script_path = sys.argv[1]
+    run_and_check_script(user_script_path)

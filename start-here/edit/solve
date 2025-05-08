@@ -1,0 +1,38 @@
+#!/opt/pwn.college/bash
+
+# Check if "myfile.txt" exists in the home directory
+if [ ! -f ~/myfile.txt ]
+then
+    cat <<END
+File "myfile.txt" does not exist in your home directory.
+Please create a file named "myfile.txt" in your home directory and rerun this script.
+END
+    exit
+fi
+
+# Check if "myfile.txt" is not empty
+if [ ! -s ~/myfile.txt ]
+then
+    cat <<END
+File "myfile.txt" exists but is empty.
+Please ensure that the file contains "Hello World!" and rerun this script.
+END
+    exit
+fi
+
+if ! grep -Fxq "Hello World!" ~/myfile.txt
+then
+    cat <<END
+The file "myfile.txt" does not contain the exact phrase "Hello World!".
+Please update the file to contain "Hello World!" exactly and rerun this script.
+END
+    exit
+fi
+
+cat <<END
+Great! The file "myfile.txt" exists in your home directory and contains "Hello World!".
+Here's your flag!
+END
+
+cat /flag
+

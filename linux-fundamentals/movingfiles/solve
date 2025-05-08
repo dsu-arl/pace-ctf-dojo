@@ -1,0 +1,149 @@
+#!/opt/pwn.college/python
+import stat
+from os import makedirs, listdir, chmod
+from os.path import exists, join
+
+def main():
+    # Set up dirs if they're not set up already.
+    challenge_one_dirs = ['/tmp/starthere/fruit', '/tmp/starthere/vegetable', '/tmp/starthere/candy']
+    for d in challenge_one_dirs:
+        if not exists(d):
+            makedirs(d)
+            chmod(d, stat.S_IRWXU | stat.S_IRWXG)
+    if not exists('/tmp/backups'):
+        makedirs('/tmp/backups')
+        chmod('/tmp/backups', stat.S_IRWXU | stat.S_IRWXG)
+    if len(listdir('/tmp/starthere')) == 3 and len(listdir('/tmp/starthere/fruit')) != 1: # Rough fix so .txt files aren't recreated
+        with open('/tmp/starthere/apple.txt', 'w') as fObj:
+            fObj.write("I'm a fruit!")
+        with open('/tmp/starthere/celery.txt', 'w') as fObj:
+            fObj.write("I'm a vegetable!")
+        with open('/tmp/starthere/gummy_worms.txt', 'w') as fObj:
+            fObj.write("I'm a candy!")
+
+        chmod('/tmp/starthere/apple.txt', stat.S_IRWXU | stat.S_IRWXG)
+        chmod('/tmp/starthere/celery.txt', stat.S_IRWXU | stat.S_IRWXG)
+        chmod('/tmp/starthere/gummy_worms.txt', stat.S_IRWXU | stat.S_IRWXG)
+        chmod('/tmp/starthere', stat.S_IRWXU | stat.S_IRWXG)
+
+
+    check_one(challenge_one_dirs)
+    if not exists('/tmp/.chall_one'):
+        print("""
+        In this challenge you are going to learn how to move
+        already existing files! While we will be only moving
+        text files (files ending with .txt) you are capable
+        of moving everything, even entire directories!
+
+        To do this we will use the command 'mv'. This is
+        short for 'move'. To use this command you will follow
+        this formula: 'mv {file_to_move} {destination}'.
+
+        As an example, say we have a file named 
+        'credit_card_info.txt' that we want to move into a 
+        directory called 'secret'. We would run this command:
+
+            'mv credit_card_info.txt secret/'
+
+        Navigate to '/tmp/starthere/'. You will see three 
+        text files and three directories. Sort the text
+        files into their proper directories.
+
+        Once you are done, run '/challenge/solve' to see if
+        you passed!
+        """)
+        return
+
+
+    check_two()
+    if not exists('/tmp/.chall_two'):
+        print("""
+        Maybe you don't like gummy worms! For this next challenge,
+        you will navigate to '/tmp/starthere/candy' and rename 
+        'gummy_worms.txt' to whatever other candy you enjoy! (If you
+        enjoy gummy worms, I'm sorry, you still have to change it)
+
+        To rename a file, we will still use the 'mv' command! However
+        instead of moving the file into a different directory, we 
+        will just move the file in place.
+
+        The way we do that is by running 'mv {file_to_change} {changed_name}'
+
+        Rename 'gummy_worms.txt' and then run '/challenge/solve' to
+        pass the challenge!
+
+        """)
+        return
+
+    check_three()
+    if not exists('/tmp/.chall_three'):
+        print("""
+        What if I want to have multiple copies of files? Well, we
+        can do that!
+
+        To copy a file we will use the 'cp' command! The proper way
+        to use this command looks like this:
+
+            'cp {file_to_copy} {destination}'
+
+        Go ahead and copy the 'apple.txt' file in '/tmp/starthere/fruit'
+        to '/tmp/backups'.
+
+        When you have done that run '/challenge/solve' to pass
+        the challenge and get the flag!
+
+        """)
+        return
+
+    with open('/flag', 'r') as fObj:
+        print(fObj.read())
+
+def check_one(dirs) -> bool:
+    # Move
+    if exists('/tmp/.chall_one'):
+        return True
+
+    total = 0
+    for d in dirs:
+        if 'fruit' in d and 'apple.txt' in listdir(d):
+            total += 1
+        elif 'vegetable' in d and 'celery.txt' in listdir(d):
+            total += 1
+        elif 'candy' in d and 'gummy_worms.txt' in listdir(d):
+            total += 1
+
+    if total == 3:
+        with open('/tmp/.chall_one', 'w') as fObj:
+            fObj.write('complete')
+        chmod('/tmp/.chall_one', stat.S_IRWXU | stat.S_IRWXG)
+        print("Congratulations! You have successfully moved all the files into their proper directory!")
+        return True
+
+    return False
+
+def check_two() -> bool:
+    # Rename
+    dir_content = listdir('/tmp/starthere/candy')
+    if 'gummy_worms.txt' in dir_content:
+        return False
+
+    with open('/tmp/.chall_two', 'w') as fObj:
+        fObj.write('complete')
+    chmod('/tmp/.chall_two', stat.S_IRWXU | stat.S_IRWXG)
+    print(f"Great job! It looks like you changed it to {listdir('/tmp/starthere/candy')[0]}... good choice!")
+    return True
+
+def check_three() -> bool:
+    # Copy File
+    if exists('/tmp/backups/apple.txt') and exists('/tmp/starthere/fruit/apple.txt'):
+        with open('/tmp/.chall_three', 'w') as fObj:
+            fObj.write('complete')
+        chmod('/tmp/.chall_three', stat.S_IRWXU | stat.S_IRWXG)
+        print("Congratulations! You did it!")
+        return True
+    
+    return False
+
+if __name__ == "__main__":
+    main()
+

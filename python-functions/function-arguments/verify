@@ -1,0 +1,46 @@
+#!/opt/pwn.college/python
+import sys
+import os
+import re
+
+sys.path.append('/challenge')
+from pacePythonTester import ExecutionAgent as ex
+
+def print_flag():
+    try:
+        with open("/flag", "r") as f:
+            print(f.read())
+    except FileNotFoundError:
+        print("Error: Flag file not found.")
+
+def run_and_check_script(user_script_path):
+    for a,b in [(13,12),(10,42)]:
+        # Run their program with the test case of Greg
+        try:
+            stdout, stderr = ex.run(user_script_path, input=f"{a}\n{b}\n")
+        except TypeError as e:
+            """ Issue with noneType return """
+            print("Error:", e)
+            exit()
+
+        answers = [a+b,a-b,a*b,a/b]
+        for answer in answers:
+            if f"{answer}\n" not in stdout:
+                print(f"Error: Make sure that you are printing addition, subtraction, multiplication, and division with divide by 0 error checking")
+                exit()
+
+        # Also, verify that they used the text def in the file: lose check for function usage
+        if not ex.parse_script(user_script_path, "def "):
+            print(f"Error: Make sure that you are using functions")
+            exit()
+
+    print_flag()
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: run <user_script.py>")
+        sys.exit(1)
+
+    user_script_path = sys.argv[1]
+    run_and_check_script(user_script_path)

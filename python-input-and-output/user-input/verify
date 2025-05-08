@@ -1,0 +1,41 @@
+#!/opt/pwn.college/python
+import sys
+import os
+import re
+
+sys.path.append('/challenge')
+from pacePythonTester import ExecutionAgent as ex
+
+def print_flag():
+    try:
+        with open("/flag", "r") as f:
+            print(f.read())
+    except FileNotFoundError:
+        print("Error: Flag file not found.")
+
+def run_and_check_script(user_script_path):
+
+    # Run their program with the test case of Greg
+    try:
+        stdout, stderr = ex.run(user_script_path, input="Greg\n")
+    except TypeError as e:
+        """ Issue with noneType return """
+        print("Error:", e)
+        exit()
+
+    # Set up to match all cases of Hello, Greg!
+    text = re.compile('.*hello,? greg!?$', re.IGNORECASE)
+    if not text.match(stdout.strip()):
+        print(f"Error: Make sure that you are printing 'Hello, Name'!")
+        exit()
+
+    print_flag()
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: run <user_script.py>")
+        sys.exit(1)
+
+    user_script_path = sys.argv[1]
+    run_and_check_script(user_script_path)

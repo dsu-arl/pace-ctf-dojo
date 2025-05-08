@@ -1,0 +1,18 @@
+#!/usr/bin/exec-suid --real -- /usr/bin/python -I
+
+from os.path import exists
+
+if not exists('/home/hacker/append_to_me.txt'):
+	print("Couldn't find file '/home/hacker/append_to_me.txt'. Please restart the machine and try again.")
+	exit(0)
+
+with open('/home/hacker/append_to_me.txt', 'r') as fObj:
+	data = fObj.read()
+
+if data == "Please append to this file!\n":
+	print("It looks like you didn't append to the file.")
+	exit(0)
+
+print(f"Congratulations, here's your flag...")
+with open('/flag', 'r') as fObj:
+	print(fObj.read())

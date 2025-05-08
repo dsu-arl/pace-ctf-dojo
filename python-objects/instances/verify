@@ -1,0 +1,60 @@
+#!/usr/bin/exec-suid --real -- /usr/bin/python -I
+import sys
+from os.path import join
+
+try:
+	USER_FILE = join('/home/hacker', sys.argv[1])
+except IndexError:
+	print("Please give me tha name of your python file like so\n")
+	print("/challenge/verify <your_python_file_name_here>")
+	exit(-1)
+
+# Read file lines and identify necessary lines
+with open(USER_FILE, 'r') as fObj:
+    code = [x.strip().replace(' ', '') for x in fObj.readlines() if x != "\n"]
+
+# Loop through code and find target lines
+class_def = False
+dog_sit_false = False
+dog_sit_true = False
+instance = False
+method_call = False
+print_s = False
+
+for line in code:
+    if "classDog" in line:
+        class_def = True
+    if "self.is_sitting=False" in line:
+        dog_sit_false = True
+    if "self.is_sitting=True" in line:
+        dog_sit_true = True
+    if "=Dog()" in line:
+        instance = True
+    if ".sit()" in line:
+        method_call = True
+    if "print" and ".is_sitting" in line:
+        print_s = True
+
+if not class_def:
+    print("Please define your class as 'class Dog:'.")
+    exit(0)
+if not dog_sit_false:
+    print("It appears you maybe didn't set 'is_sitting' to False in the '__init__' method of your class.")
+    exit(0)
+if not dog_sit_true:
+    print("It appears you maybe don't have 'is_sitting' set properly in your 'sit' method.")
+    exit(0)
+if not instance:
+    print("it appears you didn't create an instance of your object.")
+    exit(0)
+if not method_call:
+    print("It appears that you don't call the 'sit' method on your object instance.")
+    exit(0)
+if not print_s:
+    print("It appears that you don't print out the attribute 'is_sitting'.")
+    exit(0)
+
+with open('/flag', 'r') as fObj:
+    print(fObj.read())
+
+

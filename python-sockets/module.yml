@@ -1,0 +1,12 @@
+name: Python Sockets
+challenges:
+  - id: socketcreation
+    name: Socket Creation
+  - id: serversocketcreation
+    name: Server Socket Creation
+  - id: serverloop
+    name: Server Loop
+  - id: eightballclient
+    name: Eight Ball Client
+  - id: toolsofthetrade
+    name: Tools of the Trade

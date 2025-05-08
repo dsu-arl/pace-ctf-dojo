@@ -1,0 +1,41 @@
+#!/opt/pwn.college/python
+import sys
+import os
+import re
+
+sys.path.append('/challenge')
+from pacePythonTester import ExecutionAgent as ex
+
+def print_flag():
+    try:
+        with open("/flag", "r") as f:
+            print(f.read())
+    except FileNotFoundError:
+        print("Error: Flag file not found.")
+
+def run_and_check_script(user_script_path):
+
+    # Make sure their script actually runs
+    try:
+        stdout, stderr = ex.run(user_script_path)
+    except TypeError as e:
+        """ Issue with noneType return """
+        print("Error:", e)
+        exit()
+
+    with open(user_script_path,'r') as f:
+        content = f.read()
+
+    if content.count('range(') < 3:
+        print(f"Error: Make sure to use the range() function at least 3 times!")
+        exit()
+
+    print_flag()
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: run <user_script.py>")
+        sys.exit(1)
+
+    user_script_path = sys.argv[1]
+    run_and_check_script(user_script_path)

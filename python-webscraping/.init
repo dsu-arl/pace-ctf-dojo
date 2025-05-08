@@ -1,0 +1,2 @@
+#!/bin/sh
+ln -sf /bin/python3.8 /challenge/python

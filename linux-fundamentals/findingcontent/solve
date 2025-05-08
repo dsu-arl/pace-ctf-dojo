@@ -1,0 +1,191 @@
+#!/opt/pwn.college/python
+import stat
+import random
+from os import makedirs, chmod
+from os.path import join, exists
+
+random_passwords = ["Password1!", "Cr4cKm3!", "3l1t3#", "password1234", "Admin12358"]
+
+def setup_one():
+
+    random_words = ['brisk', 'jumpy', 'zesty', 'livid', 'quirk', 'mango', 
+                    'fluff', 'gleam', 'bliss', 'vivid', 'prong', 'crisp', 
+                    'swoon', 'pluck', 'charm', 'smirk', 'witty', 'glide', 
+                    'sprig', 'whirl', 'buzzy', 'clamp', 'swift', 'glee', 
+                    'jolly', 'flick', 'brawn', 'slink', 'twist', 'clink', 
+                    'spark', 'bloom', 'frisk', 'flair', 'knack', 'scamp', 
+                    'flash', 'brine', 'snare', 'sweep', 'frost', 'shard', 
+                    'prick', 'flock', 'grind', 'creek', 'swoop', 'clash', 
+                    'blaze', 'tweak', 'latch', 'shirk', 'blurb', 'chirp', 
+                    'whizz', 'glint', 'trill', 'whisk', 'gruff', 'spunk', 
+                    'twirl', 'brash', 'slick', 'gloss', 'fizz', 'snarl', 
+                    'frizz', 'scuff', 'twinge', 'spurt', 'chime']
+
+    working_dir = '/tmp/one'
+    makedirs(working_dir)
+    slot = random.randint(1000, 8000)
+    with open(join(working_dir, 'data.txt'), 'w') as fObj:
+        for x in range(0, 10000):
+            if x == slot:
+                fObj.write(f"Password: {random.choice(random_passwords)}\n")
+            else:
+                fObj.write(f"{random.choice(random_words)}\n")
+
+    chmod('/tmp/one/data.txt', stat.S_IRUSR | stat.S_IRGRP)
+
+    return
+
+def setup_two():
+    random_words = ['brisk', 'jumpy', 'zesty', 'livid', 'quirk', 'mango', 
+                    'fluff', 'gleam', 'bliss', 'vivid', 'prong', 'crisp', 
+                    'swoon', 'pluck', 'charm', 'smirk', 'witty', 'glide', 
+                    'sprig', 'whirl', 'buzzy', 'clamp', 'swift', 'glee', 
+                    'jolly', 'flick', 'brawn', 'slink', 'twist', 'clink', 
+                    'spark', 'bloom', 'frisk', 'flair', 'knack', 'scamp', 
+                    'flash', 'brine', 'snare', 'sweep', 'frost', 'shard', 
+                    'prick', 'flock', 'grind', 'creek', 'swoop', 'clash', 
+                    'blaze', 'tweak', 'latch', 'shirk', 'blurb', 'chirp', 
+                    'whizz', 'glint', 'trill', 'whisk', 'gruff', 'spunk', 
+                    'twirl', 'brash', 'slick', 'gloss', 'fizz', 'snarl', 
+                    'frizz', 'scuff', 'twinge', 'spurt', 'chime']
+
+    winning_filenames = ["chunk", "blimy", "carry", "dock"]
+
+    working_dir = '/tmp/two'
+    makedirs(working_dir)
+    winning_file = random.choice(winning_filenames)
+    for word in random_words:
+        with open(join('/tmp/two', f"{word}.txt"), 'w+') as fObj:
+            fObj.write(f"Nothing here!\n")
+        chmod(join('/tmp/two', f"{word}.txt"), stat.S_IRUSR | stat.S_IRGRP)
+
+    # Create winning file
+    with open(join('/tmp/two', f"{winning_file}.txt"), 'w') as fObj:
+        fObj.write("Password: 5uper_s3cr3t_pa55p4rase")
+    chmod(join('/tmp/two', f"{winning_file}.txt"), stat.S_IRUSR | stat.S_IRGRP)
+
+    return
+    
+
+def check_one():
+    ans = input("What is the password inside '/tmp/one/data.txt'? ")
+    for p in random_passwords:
+        if p in ans:
+            with open('/tmp/.one_check', 'w') as fObj:
+                fObj.write("complete")
+            return True
+
+    return False
+
+def check_two():
+    ans = input("What is the name of the file that contains the password? ")
+    try:
+        with open(join('/tmp/two', ans), 'r') as fObj:
+            data = fObj.read()
+    except FileNotFoundError:
+        print(f"'/tmp/two/{ans}' does not appear to exist! Try again!")
+        return False
+
+    if 'Password' in data:
+        with open('/tmp/.two_check', 'w') as fObj:
+            fObj.write('complete')
+        return True
+
+    return False
+
+def print_one_instructions():
+    print("""
+    Sometimes you have large files on your computer
+    and you only want to find a specific thing inside
+    it.
+
+    In the Linux terminal, we can search for particular
+    strings within a file, rather than looking through
+    thousands of lines to try and find what we need.
+
+    To do this, we use the command 'grep'. The syntax
+    you will use to run the command is this:
+
+        'grep {string_to_search_for} {file_to_look_in}'
+
+    grep will display the entire line of text, where
+    the input string is found.
+
+    For this challenge I want you to try and find a 
+    password within the file '/tmp/one/data.txt'.
+
+    The password resides in the file and looks like
+    this:
+        'Password: {supersecretpassword}'
+
+    Once you are done, copy the password, run 
+    '/challenge/solve', and then paste in the password
+    you found!
+
+    """)
+
+def print_two_instructions():
+
+    print("""
+    Maybe you don't have a very large file to sift 
+    through, but you have A LOT of files! You don't 
+    remember which one contains your password!
+
+    Luckily for us, 'grep' can also search multiple
+    within a directory!
+
+    If you run 'ls /tmp/two' you will see a directory
+    that has many text files. Your goal is to find the
+    one that has the Password!
+
+    Your 'grep' command will be similar to the first
+    challenge, however, you will have to actually
+    change directories into '/tmp/two'.
+
+    Once there, you will run grep as such:
+
+        'grep {string_to_search_for} *
+
+    The asterisk is important because it says "look
+    through all the files in my current directory!
+
+    Once you have the name of the file that the
+    password is in, run '/challenge/solve' and 
+    paste it in to get your flag!
+
+    """)
+
+def main():
+
+    if not exists('/tmp/one'):
+        setup_one()
+        print_one_instructions()
+        return
+
+    if not exists('/tmp/.one_check'):
+        if check_one():
+            print("Congratulations! You found the password!")
+        else:
+            print("Oops! That wasn't quite right!")
+            print_one_instructions()
+            return
+
+    if not exists('/tmp/two'):
+        setup_two()
+        print_two_instructions()
+        return
+
+    if not exists('/tmp/.two_check'):
+        if check_two():
+            print("Congratulations! You found it!")
+        else:
+            print("Oops! That wasn't quite right!")
+            print_two_instructions()
+            return
+
+    with open('/flag', 'r') as fObj:
+        print(fObj.read())
+
+if __name__ == "__main__":
+    main()
+

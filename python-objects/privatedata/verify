@@ -1,0 +1,57 @@
+#!/usr/bin/exec-suid --real -- /usr/bin/python -I
+import sys
+from random import randint
+import importlib.util
+from os.path import exists, join
+
+def import_module_by_path(module_path):
+   module_name = "custom_module"
+   spec = importlib.util.spec_from_file_location(module_name, module_path)
+   custom_module = importlib.util.module_from_spec(spec)
+   spec.loader.exec_module(custom_module)
+   return custom_module
+
+try:
+	USER_FILE = join('/home/hacker', sys.argv[1])
+except IndexError:
+	print("Please give me tha name of your python file like so\n")
+	print("/challenge/verify <your_python_file_name_here>")
+	exit(-1)
+
+# Identify user file and import it
+if not exists(USER_FILE):
+	print("Error: That file doesn't seem to exist.")
+	exit(-1)
+
+try:
+	car = import_module_by_path(USER_FILE)
+except ImportError as e:
+	print(f"Failed to import data from {USER_FILE}.")
+	print(e)
+	exit(-1)
+
+c = car.Car()
+
+try:
+	print(c.__fuel)
+	print("The 'fuel' attribute was not private! Please make it private!")
+	exit(0)
+except AttributeError:
+	print("The 'fuel' attribute is private!")
+
+if c.fuel_gauge() != 0:
+	print("The fuel wasn't set to 0 by default!")
+	exit(0)
+print("Default fuel count is correct!")
+
+c.add_fuel()
+c.add_fuel()
+c.add_fuel()
+
+c.drive(4)
+
+if c.fuel_gauge() != 18:
+	print("There is something wrong with how you are adding fuel or in your driving method.")
+print("Congratulations, your car works properly!")
+with open('/flag', 'r') as fObj:
+	print(fObj.read())

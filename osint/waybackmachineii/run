@@ -1,0 +1,22 @@
+#!/opt/pwn.college/python
+def main():
+	print("Looks like you have a new email in your inbox!")
+	input("Press enter to open it...")
+
+	print("\n\n\n")
+
+	print("To whom it may concern,\n")
+	print("I have heard you have the skill set I need to find")
+	print("out information. I need you to find very specific")
+	print("information on a club that was at Dakota State Uni")
+	print("versity.")
+	print("\nI want to know what year their Martial Arts Club")
+	print("was founded. I tried to search their website,")
+	print("but it's not on dsu.edu anymore. If you're able to")
+	print("help me, that would be great!")
+	print("\nBest Regards,\nJohn Doe.")
+
+	print("\n\nUse the Wayback Machine to identify when DSU's Martial Arts Club was founded.\nHint: You will have to navigate the archived website to find the club.")
+
+if __name__ == "__main__":
+	main()

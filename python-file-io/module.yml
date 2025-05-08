@@ -1,0 +1,12 @@
+name: Python File I/O
+challenges:
+  - id: readfile
+    name: Read From File
+  - id: writefile
+    name: Write To File
+  - id: appendfile
+    name: Append To File
+  - id: closingfiles
+    name: Closing Files
+  - id: withopen
+    name: With Open

@@ -1,0 +1,40 @@
+#!/opt/pwn.college/python
+import sys
+import os
+import re
+
+sys.path.append('/challenge')
+from pacePythonTester import ExecutionAgent as ex
+
+def print_flag():
+    try:
+        with open("/flag", "r") as f:
+            print(f.read())
+    except FileNotFoundError:
+        print("Error: Flag file not found.")
+
+def run_and_check_script(user_script_path):
+
+    # Run their program
+    try:
+        stdout, stderr = ex.run(user_script_path)
+    except TypeError as e:
+        """ Issue with noneType return """
+        print("Error:", e)
+        exit()
+
+    # Count number of newlines, they should print at least 3 things
+    if stdout.count('\n') < 3:
+        print(f"Error: Make sure that you are printing 3 different varaibles!")
+        exit()
+
+    print_flag()
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: run <user_script.py>")
+        sys.exit(1)
+
+    user_script_path = sys.argv[1]
+    run_and_check_script(user_script_path)

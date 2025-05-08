@@ -1,0 +1,14 @@
+#!/usr/bin/exec-suid --real -- /usr/bin/python -I
+
+import base64
+
+encoded_msg = input("Give me the string from 'readme.txt': ").strip()
+encoded_bytes = encoded_msg.encode('ascii')
+decoded_bytes = base64.b64decode(encoded_bytes)
+decoded_msg = decoded_bytes.decode('ascii')
+
+if decoded_msg == "Hello, fellow students.":
+	with open('/flag', 'r') as fObj:
+		print(fObj.read())
+else:
+	print("That data didn't look right! Try again!")

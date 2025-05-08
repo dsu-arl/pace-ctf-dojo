@@ -1,0 +1,60 @@
+#!/opt/pwn.college/python
+import sys
+sys.path.append('/challenge')
+
+def print_instructions():
+    print('''
+    Google "dorking" is a way of searching for information in a more advanced way. Below are some of the common keywords
+    and symbols that can be used:
+
+    OR - used to search for one thing 'or' another thing
+        Example: apples OR oranges
+          This will find results for apples or oranges.
+    
+    AND - used to search for one thing 'and' another thing
+        Example: apples AND oranges
+          This will find results for apples and also oranges.
+
+    Quotes - use quotes around a search term to search for pages that explicitly have that text
+        Example: "Dakota State University"
+          This will find pages that have the exact text "Dakota State University".
+
+    site:DOMAIN - used to only show results from a specific site
+          Example: site:dsu.edu "academic"
+            This will find the exact text "academic" on the dsu.edu website.
+
+    There are many other things you can do with Google dorks, too much to list here.
+
+    With the information provided here, use a Google dork to tell me the two professors at DSU that have
+    the last name of "Richardson".
+    
+    ''')
+
+def print_flag():
+	try:
+		with open("/flag", "r") as f:
+			print(f.read())
+	except FileNotFoundError:
+		print("Error: Flag file not found.")
+
+def main():
+    print_instructions()
+
+    answer = input("What are the first names of the two professors at DSU with the last name 'Richardson'? (any order, space separated) ").lower()
+    if ('rob' in answer or 'robert' in answer) and 'scott' in answer:
+        print("That is correct!")
+        dork = input("\nWhat is the Google dork that you used? ")
+        if "site:dsu.edu" in dork and "\"richardson\"" in dork.lower():
+            print("That is correct! An ideal dork for this search would be:")
+            print("\tsite:dsu.edu \"Richardson\" AND \"Department\"")
+            print("This would search dsu.edu for the name 'Richardson' and look for the text 'Department' to filter out 'Richardson Hall'")
+            print("\nHere is your flag!")
+            print_flag()
+        else:
+            print("Ope, that's not quite right. Try again.")
+    else:
+        print("Ope, that's not quite right. Try again.")
+
+
+if __name__ == "__main__":
+    main()

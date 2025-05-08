@@ -1,0 +1,49 @@
+#!/usr/bin/exec-suid --real -- /usr/bin/python -I
+
+import sys
+from os.path import exists
+
+if len(sys.argv) != 2:
+	print("Please run '/challenge/verify <your_python_file.py>'")
+	exit(0)
+
+if not exists('/home/hacker/closing.txt'):
+	print("Couldn't find file '/home/hacker/closing.txt'. Please restart the machine and try again.")
+	exit(0)
+
+with open('/home/hacker/closing.txt', 'r') as fObj:
+	data = fObj.read()
+if len(data) <= 0:
+	print("No data was written to '/home/hacker/closing.txt'.")
+	exit(0)
+
+_open = False
+_close = False
+
+try:
+	with open(sys.argv[1], 'r') as fObj:
+		data = fObj.readlines()
+except FileNotFoundError:
+	print(f"Couldn't find file: {sys.argv[1]}.")
+	exit(0)
+except IndexError:
+	print("Please supply your python file when running '/challenge/verify'.")
+	exit(0)
+
+
+for d in data:
+	if 'open' in d:
+		_open = True
+	if 'close' in d and _open == True:
+		_close = True
+
+if not _open:
+	print("You didn't open a file in your code.")
+	exit(0)
+if not _close:
+	print("The 'close' method was either not called, or was called before 'open'.")
+	exit(0)
+
+print(f"Congratulations, here's your flag...")
+with open('/flag', 'r') as fObj:
+	print(fObj.read())

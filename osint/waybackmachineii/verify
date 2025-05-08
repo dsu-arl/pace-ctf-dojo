@@ -1,0 +1,18 @@
+#!/opt/pwn.college/python
+
+def main():
+	try:
+		print("What year was Martial Arts Club founded at Dakota State University? ")
+		ans = input("> ")
+	except KeyboardInterrupt:
+		exit(0)
+
+	if ans.strip() != '2002':
+		print("That year isn't correct!\nTry again!")
+		exit(0)
+
+	with open('/flag', 'r') as fObj:
+		print(fObj.read().strip())
+
+if __name__ ==  "__main__":
+	main()

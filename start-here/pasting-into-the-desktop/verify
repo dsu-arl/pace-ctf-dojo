@@ -1,0 +1,12 @@
+#!/usr/bin/exec-suid --real -- /usr/bin/python -I
+import sys
+sys.path.append('/challenge')
+
+def print_flag():
+    try:
+        with open("/flag", "r") as f:
+            print(f.read())
+    except FileNotFoundError:
+        print("Error: Flag file not found.")
+
+# Add your imports and other code below here

@@ -1,0 +1,43 @@
+#!/usr/bin/exec-suid --real -- /usr/bin/python -I
+
+import sys
+from os.path import exists
+
+if not exists('/home/hacker/bee_movie_script.txt'):
+	print("Couldn't find file '/home/hacker/bee_movie_script.txt'")
+	exit(0)
+
+if len(sys.argv) != 2:
+	print("Please supply your python file as follows: '/challenge/verify <your_python_file.py>'")
+	exit(0)
+
+with open('/home/hacker/bee_movie_script.txt', 'r') as fObj:
+	data = fObj.read()
+
+if data.lower().strip() != "according to all known laws of aviation...":
+	print("It appears that the data you wrote doesn't match up!")
+	exit(0)
+
+with open(sys.argv[1], 'r') as fObj:
+	data = fObj.readlines()
+
+wo = False
+w = False
+
+for d in data:
+	if 'with open' in d:
+		wo = True
+	if '.write' in d:
+		w = True
+
+if not wo:
+	print("It appears 'with open' wasn't called!")
+	exit(0)
+
+if not w:
+	print("It appears you aren't writing to the file in your code!")
+	exit(0)
+
+print("Congratulations!")
+with open('/flag', 'r') as fObj:
+	print(fObj.read())

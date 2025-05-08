@@ -1,0 +1,39 @@
+#!/opt/pwn.college/python
+import sys
+import os
+import re
+
+sys.path.append('/challenge')
+from pacePythonTester import ExecutionAgent as ex
+
+def print_flag():
+    try:
+        with open("/flag", "r") as f:
+            print(f.read())
+    except FileNotFoundError:
+        print("Error: Flag file not found.")
+
+def run_and_check_script(user_script_path):
+
+    variables = ex.get_defined_variables(user_script_path)
+
+    list_count = 0
+    for var in variables['variables'].values():
+        if var['type'] == 'List':
+            list_count += 1
+
+    # Count how many lists they created
+    if list_count < 3:
+        print(f"Error: Make sure that you are defining 3 lists!")
+        exit()
+
+    print_flag()
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: run <user_script.py>")
+        sys.exit(1)
+
+    user_script_path = sys.argv[1]
+    run_and_check_script(user_script_path)

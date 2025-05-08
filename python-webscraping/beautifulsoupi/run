@@ -1,0 +1,165 @@
+#!/opt/pwn.college/python
+from flask import Flask, request
+from bs4 import BeautifulSoup
+
+app = Flask(__name__)
+with open("/flag", "r") as fObj:
+    flag = fObj.read()
+
+wrong_agent = '<p>Wrong user agent!</p>\n'
+html = """
+<html>
+<head><title>The Dormouse's story</title></head>
+<body>
+
+<p class="title"><b>The Dormouse's story</b></p>
+
+<p class="story">Once upon a time there were three little sisters; and their names were</p>
+
+<a href="http://example.com/elsie" class="sister" id="link1">Elsie</a>,
+<hr>
+<br>
+
+<p>The autumn air was crisp, carrying with it the scent of fallen leaves and distant chimneys. Each step crunched along the gravel path, as if announcing the journey to nowhere in particular.</p>
+
+<a href="http://example.com/lacie" class="sister" id="link2">Lacie</a>
+<blockquote>Some words of wisdom.</blockquote>
+
+<p>Amidst the chatter of everyday life, there exists a stillness where thoughts settle like dust on forgotten shelves. In these quiet spaces, we often find answers we weren't even looking for.</p>
+
+<a href="http://example.com/tillie" class="sister" id="link3">Tillie</a>;
+<div class="highlight">Highlighted text here.</div>
+
+<a href="http://example.com/frank" class="sister" id="link1">Elsie</a>,
+<br>
+<aside>Side note content.</aside>
+
+<a href="http://example.com/charlie" class="sister" id="link1">Elsie</a>,
+<p class="spacer">---</p>
+
+<a href="http://example.com/deandra" class="sister" id="link1">Elsie</a>,
+<small>Small note here.</small>
+
+<a href="http://example.com/dennis" class="sister" id="link1">Elsie</a>,
+<div>Another dividing line.</div>
+<br>
+
+<a href="http://example.com/mac" class="sister" id="link1">Elsie</a>,
+<blockquote>Another thoughtful blockquote.</blockquote>
+
+<a href="http://example.com/waitress" class="sister" id="link1">Elsie</a>,
+<span>Simple separator text</span>
+
+<a href="http://example.com/spork" class="sister" id="link1">Elsie</a>,
+<hr>
+
+<a href="http://example.com/fork" class="sister" id="link1">Elsie</a>,
+<p>Random extra paragraph.</p>
+
+<a href="http://example.com/spoon" class="sister" id="link1">Elsie</a>,
+<aside>Something noteworthy here.</aside>
+
+<a href="http://example.com/knife" class="sister" id="link1">Elsie</a>,
+<p class="divider">-----</p>
+
+<a href="http://example.com/stick" class="sister" id="link1">Elsie</a>,
+<div>Important note in this section.</div>
+<br>
+
+<a href="http://example.com/wood" class="sister" id="link1">Elsie</a>,
+<span>~ Section separator ~</span>
+
+<a href="http://example.com/oak" class="sister" id="link1">Elsie</a>,
+<blockquote>Quote for emphasis.</blockquote>
+
+<a href="http://example.com/ash" class="sister" id="link1">Elsie</a>,
+<p class="break">A small break in the text.</p>
+
+<a href="http://example.com/birch" class="sister" id="link1">Elsie</a>,
+<div>Divider content here.</div>
+
+<a href="http://example.com/dynamite" class="sister" id="link1">Elsie</a>,
+<br>
+
+<a href="http://example.com/branch" class="sister" id="link1">Elsie</a>,
+<small>Just a small additional note.</small>
+
+<a href="http://example.com/git" class="sister" id="link1">Elsie</a>,
+<aside>Side content for contrast.</aside>
+
+<a href="http://example.com/master" class="sister" id="link1">Elsie</a>,
+<hr>
+<p class="highlight">Highlighted paragraph.</p>
+
+<a href="http://example.com/push" class="sister" id="link2">Lacie</a> and
+<br>
+
+<a href="http://example.com/pull" class="sister" id="link3">Tillie</a>;
+<p>Paragraph break with detail here.</p>
+
+<a href="http://example.com/axe" class="sister" id="link2">Lacie</a> and
+<div class="extra-info">Additional information here.</div>
+
+<a href="http://example.com/survivor" class="sister" id="link3">Tillie</a>;
+<hr>
+
+<a href="http://example.com/jeff" class="sister" id="link2">Lacie</a> and
+<blockquote>Jeff's advice.</blockquote>
+
+<a href="http://example.com/bostonrob" class="sister" id="link3">Tillie</a>;
+<div class="line-break">------</div>
+
+<a href="http://example.com/twila" class="sister" id="link2">Lacie</a> and
+<p>Random section end.</p>
+
+<a href="http://example.com/joey" class="sister" id="link3">Tillie</a>;
+<span>Divider text</span>
+
+<a href="http://example.com/chandler" class="sister" id="link2">Lacie</a> and
+<br>
+
+<a href="http://example.com/precapice" class="sister" id="link3">Tillie</a>;
+<aside>Some side note here.</aside>
+
+<a href="http://example.com/banana" class="sister" id="link2">Lacie</a> and
+<p>Noteworthy comment</p>
+
+<a href="http://example.com/apple" class="sister" id="link3">Tillie</a>;
+<br>
+
+<a href="http://example.com/orange" class="sister" id="link2">Lacie</a> and
+<small>Extra tiny text.</small>
+
+<a href="http://example.com/pear" class="sister" id="link3">Tillie</a>;
+<hr>
+
+<a href="http://example.com/dragonfruit" class="sister" id="link2">Lacie</a> and
+<p class="extra">Supplemental paragraph here.</p>
+
+<a href="http://example.com/watermelon" class="sister" id="link3">Tillie</a>;
+
+<p class="story">...</p>
+
+</body>
+</html>
+"""
+
+def correct_user_agent(agent) -> bool:
+    if 'python-requests' in agent:
+        return True
+    return False
+
+@app.route("/", methods=['GET', 'POST'])
+def requests_three():
+    if request.method == 'GET' and correct_user_agent(request.headers.get('User-Agent')):
+        return html
+    elif request.method == 'POST' and correct_user_agent(request.headers.get('User-Agent')):
+        data = request.get_json()
+        # check the data to see if it's true
+        soup = BeautifulSoup(html, 'html.parser')
+        ans = len(soup.find_all('a'))
+        if int(data['answer']) == int(ans):
+            return flag
+        return "<p>Wrong Answer!</p>"
+
+app.run("challenge.localhost", 80)

@@ -1,0 +1,11 @@
+name: Linux Admin
+challenges:
+  - id: processes
+    name: Interact with processes
+    allow_privileged: false
+  - id: userpasswords
+    name: Change a user's password
+    allow_privileged: true
+  - id: usergroups
+    name: Add a user to another group
+    allow_privileged: true

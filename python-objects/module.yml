@@ -1,0 +1,16 @@
+name: Python Objects
+challenges:
+  - id: objectcreation
+    name: Object Creation
+  - id: instances
+    name: Instances
+  - id: arguments
+    name: Arguments
+  - id: knowledgechecki
+    name: Knowledge Check I
+  - id: subclass
+    name: Sub-Class
+  - id: privatedata
+    name: Private Data
+  - id: privatemethods
+    name: Private Methods

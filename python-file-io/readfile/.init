@@ -1,0 +1,5 @@
+#!/bin/sh
+
+touch /home/hacker/readme.txt
+echo "SGVsbG8sIGZlbGxvdyBzdHVkZW50cy4=" >> /home/hacker/readme.txt
+chown hacker:hacker /home/hacker/readme.txt

@@ -1,0 +1,11 @@
+name: Python Loops
+challenges:
+  - id: while
+    name: While Loops
+  - id: lists
+    name: Python Lists
+  - id: range
+    name: Range() Function
+  - id: for
+    name: For Loops
+

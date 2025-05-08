@@ -1,0 +1,12 @@
+name: Python Conditionals
+challenges:
+  - id: if-statements
+    name: If Statements
+  - id: if-else-statements
+    name: If-Else Statements
+  - id: nested
+    name: Nested Conditional Statements
+  - id: else-if-blocks
+    name: Else-If Blocks
+  - id: logical-operators
+    name: Logical Operators

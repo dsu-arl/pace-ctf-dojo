@@ -1,0 +1,54 @@
+#!/opt/pwn.college/python
+import sys
+import os
+import re
+
+sys.path.append('/challenge')
+from pacePythonTester import ExecutionAgent as ex
+
+def print_flag():
+    try:
+        with open("/flag", "r") as f:
+            print(f.read())
+    except FileNotFoundError:
+        print("Error: Flag file not found.")
+
+def run_and_check_script(user_script_path):
+    for a in ['5','10']:
+        # Make sure that they print all the numbers as a countdown
+        text = re.compile('\n'.join([str(i) for i in range(0,int(a)+1,2)]) + '$', re.IGNORECASE)
+        zeroCheck = re.compile('^0', re.IGNORECASE)
+        topRangeCheck = re.compile(f'{a}$', re.IGNORECASE)
+
+        # Run their program with the test case of Greg
+        try:
+            stdout, stderr = ex.run(user_script_path, input=f"{a}\n")
+        except TypeError as e:
+            """ Issue with noneType return """
+            print("Error:", e)
+            exit()
+
+        # Set up to match all cases of Hello, Greg!
+        if not re.search(text, stdout.strip()):
+            print("Error: Program did not print even numbers up to the input number starting at 0!")
+            if not re.search(zeroCheck, stdout.strip()):
+                print("Error: Make sure you start at 0!")
+            elif not re.search(topRangeCheck, stdout.strip()):
+                print("Error: You're missing the last number. Make sure you are using n+1 for your range() function!")
+            exit()
+
+        # Also, verify that they used the text while in the file
+        if not ex.parse_script(user_script_path, "for"):
+            print("Error: Make sure that you are using a for loop to print your numbers!")
+            exit()
+
+    print_flag()
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: run <user_script.py>")
+        sys.exit(1)
+
+    user_script_path = sys.argv[1]
+    run_and_check_script(user_script_path)

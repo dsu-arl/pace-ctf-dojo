@@ -1,0 +1,82 @@
+#!/opt/pwn.college/python
+import stat
+from os import makedirs, listdir, chmod
+from os.path import exists, join
+
+def main():
+
+    # Give challenge information
+    chall1_dir = "/tmp/starthere/"
+    if not exists(chall1_dir):
+        makedirs(chall1_dir)
+        chmod(chall1_dir, stat.S_IRWXU | stat.S_IRWXG)
+
+    if not check_one(chall1_dir):
+        print("""
+        For the first part of this challenge you will
+        create a file.
+
+        To do that, you will need the 'touch' command.
+
+        To create a file, you just run the command
+        'touch {filename}' where filename is whatever
+        you want to name it. This creates an empty file
+        with no contents in it.
+
+        To pass this first part you must navigate to
+        the '/tmp/starthere/' directory and then
+        create a file in that directory with whatever
+        name you want to give it.
+
+        After that, run '/challenge/solve' again to 
+        move on!
+                """)
+        return 0
+    chall2_dir = "/tmp/lorum/"
+    if not exists(chall2_dir):
+        makedirs(chall2_dir)
+        chmod(chall2_dir, stat.S_IRWXU | stat.S_IRWXG)
+        with open(join(chall2_dir, 'ipsum.txt'), 'w') as fObj:
+            fObj.write("Delete me!")
+        
+        chmod(join(chall2_dir, 'ipsum.txt'), stat.S_IRWXU | stat.S_IRWXG)
+
+    if not check_two(chall2_dir):
+        print("""
+        Now you will have to delete a file!
+
+        Navigate to the directory '/tmp/lorum'
+        and use the 'rm' command to remove the
+        file 'ipsum.txt'. 
+
+        'rm' stands for remove... so it's easy
+        to remember! Usage: 'rm {filename}'.
+
+        Once you have deleted the file, run
+        '/challenge/solve' one last time to 
+        get your flag!
+        """)
+        return 0
+
+    with open('/flag', 'r') as fObj:
+        print(fObj.read())
+
+def check_one(tmp_dir) -> bool:
+    # Check if file exists
+    file = listdir(tmp_dir)
+    if len(file) > 0:
+        print(f"Looks like you created the file '{file[0]}'! Great job!")
+        return True
+    return False
+
+def check_two(tmp_dir) -> bool:
+    # Check if correct file doesn't exist
+    file = listdir(tmp_dir)
+    if len(file) > 0:
+        return False
+    print("You successfully deleted the file! Here's the flag!")
+    return True
+
+if __name__ == "__main__":
+    main()
+

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# Add hacker to the sudoers file to run /usr/bin/passwd
+# echo "hacker ALL=(ALL) NOPASSWD: /usr/bin/passwd" >> /etc/sudoers
+
+# Add the wkiffin user
+useradd -m wkiffin
+
+# Alias passwd to fake passwd
+echo "alias passwd='/challenge/passwd'" >> /home/hacker/.bashrc

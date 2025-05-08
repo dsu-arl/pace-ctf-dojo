@@ -1,0 +1,94 @@
+#!/opt/pwn.college/python
+# In this challenge, people will learn about using --help
+# as well as using flags with the uname command
+from os.path import exists
+import subprocess
+
+def main():
+
+    # Print instructions, particularly how to use --help
+    if not exists('/tmp/.check_one'):
+        print("""
+        So far, we have only used the most basic
+        form of commands. Last challenge, you
+        got a taste for what a command line
+        flag is with 'ls -a'. Command line flags
+        extend the utility of commands in linux!
+
+        How do we know what flags are available
+        and what they do?
+
+        Two ways! One way is using linux built in 
+        manual pages, but we won't focus on that
+        here.
+
+        The quick way is by passing the '--help'
+        flag to the command we want to know how to 
+        use! For example:
+        
+            'ls --help'
+
+        In this challenge you will need to use the
+        'uname' command to answer three questions.
+
+        It's up to you to figure out how to find
+        those answers!
+
+        """)
+
+        with open('/tmp/.check_one', 'w') as fObj:
+            fObj.write('check')
+
+        print("Using 'uname', what is the kernel name of this device?") 
+        return
+
+    # Ask for kernel-name
+    if not exists('/tmp/.check_two'):
+        try:
+            ans = input("What is the kernel name of this device? ")
+        except KeyboardInterrupt:
+            return
+        if ans == subprocess.run('uname -s', shell=True, text=True, capture_output=True).stdout.strip():
+            with open('/tmp/.check_two', 'w') as fObj:
+                fObj.write('check')
+            print("Using 'uname', what is the kernel release of this device?")
+        else:
+            print("Oops! That's not correct!")
+
+        return
+
+    # Ask for kernel-release
+    if not exists('/tmp/.check_three'):
+        try:
+            ans = input("What is the kernel release of this device? ")
+        except KeyboardInterrupt:
+            return
+        if ans == subprocess.run('uname -r', shell=True, text=True, capture_output=True).stdout.strip():
+            with open('/tmp/.check_three', 'w') as fObj:
+                fObj.write('check')
+            print("Using 'uname', what is the machine type of this device?")
+        else:
+            print("Oops! That's not correct!")
+        
+        return
+
+    # Ask for machine
+    if not exists('/tmp/.check_four'):
+        try:
+            ans = input("What is the machine type of this device? ")
+        except KeyboardInterrupt:
+            return
+        if ans == subprocess.run('uname -m', shell=True, text=True, capture_output=True).stdout.strip():
+            with open('/tmp/.check_four', 'w') as fObj:
+                fObj.write('check')
+        else:
+            print("Oops! That's not correct!")
+            return
+        
+
+    with open('/flag', 'r') as fObj:
+        print(fObj.read())
+
+if __name__ == "__main__":
+    main()
+

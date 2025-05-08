@@ -1,0 +1,21 @@
+#!/opt/pwn.college/python
+
+def main():
+	try:
+		print("What was Dakota State University's slogan in 2012? ")
+		ans = input("> ")
+	except KeyboardInterrupt:
+		exit(0)
+
+	keywords = ['technically', 'we\'re', 'better']
+
+	for w in keywords:
+		if w not in ans.lower():
+			print("It appears you don't have the correct slogan!\nTry again!")
+			exit(0)
+
+	with open('/flag', 'r') as fObj:
+		print(fObj.read().strip())
+
+if __name__ ==  "__main__":
+	main()

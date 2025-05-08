@@ -1,0 +1,17 @@
+#!/usr/bin/exec-suid --real -- /usr/bin/python -I
+
+from os.path import exists
+
+if not exists('/home/hacker/my_data.txt'):
+	print("Couldn't find file '/home/hacker/my_data.txt'")
+	exit(0)
+
+with open('/home/hacker/my_data.txt', 'r') as fObj:
+	data = fObj.read()
+if len(data) <= 0:
+	print("It looks like you didn't write any data to the file!")
+	exit(0)
+
+print(f"You wrote '{data.strip()}' to '/home/hacker/my_data.txt'! Here's your flag...")
+with open('/flag', 'r') as fObj:
+	print(fObj.read())

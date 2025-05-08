@@ -1,0 +1,42 @@
+#!/opt/pwn.college/python
+
+birthdaywords = ['1999', 'january', '01', '05', 'jan', '99']
+dogwords = ['hermie', 'dog', 'doggy', 'doggo']
+hobbywords = ['reading', 'books', 'classics', 'book', 'read']
+
+print("Given the information collected from '@random_dude12' on InstantGraham,")
+print("create a password using information from all of his posts.")
+user_input = input("> ")
+
+b = False
+d = False
+h = False
+
+for x in birthdaywords:
+    if x in user_input.lower():
+        b = True
+        break
+
+for x in dogwords:
+    if x in user_input.lower():
+        d = True
+        break
+
+for x in hobbywords:
+    if x in user_input.lower():
+        h = True
+        break
+
+if not b:
+    print("Need information regarding the birthday!")
+    exit(0)
+if not d:
+    print("Need information regarding his dog!")
+    exit(0)
+if not h:
+    print("Need information regarding his hobby!")
+    exit(0)
+
+print("Password accepted!")
+with open('/flag', 'r') as fObj:
+    print(fObj.read())

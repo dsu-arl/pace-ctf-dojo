@@ -1,0 +1,32 @@
+mkdir /home/hacker/old_stuff
+
+echo "ChickenNoodleS0up143" > /home/hacker/old_stuff/old_password.txt
+cat << EOT >> /home/hacker/old_stuff/old_love_letter.txt
+Dearest Pookie,
+
+Your going away has cast a shadow on my heart.
+It's as if you were my sun, and as you set over 
+the horizon, only darkness remains.
+
+The twilight of my soul has brought upon me
+exceeding anguish. No vice I turn to can
+procure satisfaction. The longings of my heart
+cannot be fulfilled by material extravagance.
+
+Oh, to see you again, Pookie. Your presence 
+is like a cool breeze on a hot day. A warm
+drink on a freezing evening. 
+
+Make haste to reply to me. Your words move
+my heart to rejoice.
+
+In love,
+Bernard Carburetor IV.
+EOT
+echo "The carrots in the fridge have gone bad." > /home/hacker/old_stuff/old_note.txt
+
+echo "GorillaSnacksPackageHammer" > /home/hacker/.hidden_password_file.txt
+
+chown -R hacker:hacker /home/hacker/.hidden_password_file.txt
+chown -R hacker:hacker /home/hacker/old_stuff
+

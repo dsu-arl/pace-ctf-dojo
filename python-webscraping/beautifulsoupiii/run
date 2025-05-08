@@ -1,0 +1,148 @@
+#!/opt/pwn.college/python
+from flask import Flask, request
+from bs4 import BeautifulSoup
+
+app = Flask(__name__)
+with open("/flag", "r") as fObj:
+    flag = fObj.read()
+
+wrong_agent = '<p>Wrong user agent!</p>\n'
+html = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Table</title>
+    <style>
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin: 20px auto;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<h2 style="text-align: center;">Product Table</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Product Number</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>The Great Gatsby</td><td>9384725163</td><td>$15.99</td></tr>
+        <tr><td>Building Blocks Set</td><td>5293847614</td><td>$25.50</td></tr>
+        <tr><td>Wireless Earbuds</td><td>7482951346</td><td>$49.99</td></tr>
+        <tr><td>Plush Teddy Bear</td><td>6234897512</td><td>$18.75</td></tr>
+        <tr><td>Coding for Beginners</td><td>8152739485</td><td>$22.45</td></tr>
+        <tr><td>Electric Kettle</td><td>9283457611</td><td>$32.99</td></tr>
+        <tr><td>Bluetooth Speaker</td><td>8742395604</td><td>$44.95</td></tr>
+        <tr><td>Yoga Mat</td><td>1827463590</td><td>$19.99</td></tr>
+        <tr><td>LED Desk Lamp</td><td>7834519206</td><td>$27.50</td></tr>
+        <tr><td>Portable Charger</td><td>9028374615</td><td>$34.00</td></tr>
+        <tr><td>Graphic Novel Collection</td><td>5182937460</td><td>$29.99</td></tr>
+        <tr><td>Kids Coloring Book</td><td>4728395062</td><td>$6.75</td></tr>
+        <tr><td>Wireless Mouse</td><td>5291837462</td><td>$14.99</td></tr>
+        <tr><td>Smart Watch</td><td>3647285910</td><td>$89.95</td></tr>
+        <tr><td>Waterproof Backpack</td><td>6237894051</td><td>$38.50</td></tr>
+        <tr><td>Metal Water Bottle</td><td>8394725612</td><td>$18.00</td></tr>
+        <tr><td>Camping Tent</td><td>2345789601</td><td>$75.20</td></tr>
+        <tr><td>Electric Screwdriver</td><td>9348576120</td><td>$45.99</td></tr>
+        <tr><td>Tabletop Game Set</td><td>5873294610</td><td>$59.99</td></tr>
+        <tr><td>Running Shoes</td><td>3764928501</td><td>$69.99</td></tr>
+        <tr><td>Hand Mixer</td><td>4812653790</td><td>$29.95</td></tr>
+        <tr><td>Kitchen Knife Set</td><td>7364829501</td><td>$85.30</td></tr>
+        <tr><td>Wireless Keyboard</td><td>2938475614</td><td>$23.75</td></tr>
+        <tr><td>Board Game - Chess</td><td>5647382910</td><td>$16.50</td></tr>
+        <tr><td>Pet Bed - Large</td><td>1738492560</td><td>$34.99</td></tr>
+        <tr><td>Hiking Boots</td><td>9827451630</td><td>$99.95</td></tr>
+        <tr><td>Scented Candles Set</td><td>4358791206</td><td>$22.00</td></tr>
+        <tr><td>Binoculars</td><td>9842513678</td><td>$42.99</td></tr>
+        <tr><td>USB Flash Drive 128GB</td><td>8351764920</td><td>$15.50</td></tr>
+        <tr><td>Noise Cancelling Headphones</td><td>4739185026</td><td>$69.99</td></tr>
+        <tr><td>Portable Blender</td><td>6825471309</td><td>$19.45</td></tr>
+        <tr><td>Art Supplies Kit</td><td>5271389460</td><td>$34.75</td></tr>
+        <tr><td>Bluetooth Tracker</td><td>9356174820</td><td>$24.99</td></tr>
+        <tr><td>Leather Journal</td><td>7482956310</td><td>$18.95</td></tr>
+        <tr><td>Home Security Camera</td><td>5813472096</td><td>$55.00</td></tr>
+        <tr><td>Desk Organizer</td><td>2384951607</td><td>$12.80</td></tr>
+        <tr><td>Bike Helmet</td><td>6587314029</td><td>$44.99</td></tr>
+        <tr><td>Electric Toothbrush</td><td>4918257603</td><td>$49.95</td></tr>
+        <tr><td>Cooking Utensils Set</td><td>1728395062</td><td>$28.50</td></tr>
+        <tr><td>Waterproof Picnic Blanket</td><td>5782903412</td><td>$24.99</td></tr>
+        <tr><td>Stainless Steel Travel Mug</td><td>3948175026</td><td>$14.99</td></tr>
+        <tr><td>Electric Skillet</td><td>4729183650</td><td>$39.95</td></tr>
+        <tr><td>Wireless Charger Pad</td><td>5842136970</td><td>$19.99</td></tr>
+        <tr><td>Digital Alarm Clock</td><td>1938472605</td><td>$12.50</td></tr>
+        <tr><td>Air Fryer</td><td>8432671509</td><td>$79.00</td></tr>
+        <tr><td>Book - "Digital Minimalism"</td><td>7281450396</td><td>$17.99</td></tr>
+        <tr><td>Portable Projector</td><td>6318529470</td><td>$159.99</td></tr>
+        <tr><td>Outdoor Hammock</td><td>4273968501</td><td>$27.00</td></tr>
+        <tr><td>USB Hub with 4 Ports</td><td>1836295470</td><td>$9.75</td></tr>
+        <tr><td>Adjustable Dumbbell</td><td>5269317480</td><td>$59.99</td></tr>
+    </tbody>
+</table>
+
+</body>
+</html>
+"""
+
+def correct_user_agent(agent) -> bool:
+    if 'python-requests' in agent:
+        return True
+    return False
+
+@app.route("/", methods=['GET', 'POST'])
+def requests_three():
+    if request.method == 'GET' and correct_user_agent(request.headers.get('User-Agent')):
+        return html
+    elif request.method == 'POST' and correct_user_agent(request.headers.get('User-Agent')):
+        data = request.get_json()
+        soup = BeautifulSoup(html, 'html.parser')
+        table = soup.find('table')
+        table_body = table.find('tbody')
+        rows = table_body.find_all('tr')
+        table_data = []
+        for row in rows:
+            cols = row.find_all('td')
+            cols = [ele.text.strip() for ele in cols]
+            table_data.append([ele for ele in cols if ele])
+
+        answer1 = 0
+        answer3 = 600.00
+        for d in table_data:
+            price = float(d[-1].replace('$', ''))
+            if price >= 20.00 and price <= 50.00:
+                answer1 += 1
+
+            if d[0] == 'Kitchen Knife Set':
+                answer2 = d[1]
+
+            if price < answer3:
+                answer3 = price
+
+        if data['answer1'] == answer1:
+            if data['answer2'] == answer2:
+                if data['answer3'] == answer3:
+                    return flag
+                else:
+                    return "<p>'answer3' was wrong!</p>"
+            else:
+                return "<p>'answer2' was wrong!</p>"
+        else:
+            return "<p>'answer1' was wrong!</p>"
+
+app.run("challenge.localhost", 80)

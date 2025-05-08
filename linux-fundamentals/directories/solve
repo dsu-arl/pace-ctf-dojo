@@ -1,0 +1,112 @@
+#!/opt/pwn.college/python
+import random
+from os import makedirs
+from os import environ
+from os import system
+from os.path import join, exists
+
+DATA_FILE = "/tmp/.user.data"
+
+def setup_game():
+    random_words = [
+        "brisk", "jumpy", "zesty", "livid", "quirk", "mango", "fluff", "gleam", "bliss", "vivid",
+        "prong", "crisp", "swoon", "pluck", "charm", "smirk", "witty", "glide", "sprig", "whirl",
+        "buzzy", "clamp", "swift", "glee", "jolly", "flick", "brawn", "slink", "twist", "clink",
+        "spark", "bloom", "frisk", "flair", "knack", "scamp", "quirk", "flash", "jumpy", "brine",
+        "snare", "sweep", "frost", "shard", "prick", "flock", "grind", "creek", "gleam", "brisk",
+        "pluck", "swoop", "snare", "clash", "slink", "blaze", "crisp", "flick", "glee", "tweak",
+        "latch", "shirk", "blurb", "chirp", "whizz", "glint", "trill", "swoop", "quirk", "whisk",
+        "gleam", "gruff", "spunk", "flair", "smirk", "brisk", "swift", "twirl", "grind", "brash",
+        "slick", "gloss", "whirl", "fizz", "clink", "knack", "pluck", "snarl", "frizz", "whisk",
+        "scuff", "twinge", "spurt", "chime", "bliss", "frisk", "twist", "smirk", "shard", "clamp"
+    ]
+
+    # Create random winning dir
+    winning_dir = "/tmp/starthere"
+    end = random.randint(2, 4)
+    for x in range(0, end):
+        # Set up fake dirs
+        if x != end:
+            makedirs(join(winning_dir, random_words.pop(random.randrange(len(random_words)))))
+        winning_dir = join(winning_dir, random_words.pop(random.randrange(len(random_words))))
+        
+
+    makedirs(winning_dir)
+
+    pass_filename = f"pwn_{random.choice(random_words)}_{random.choice(random_words)}_pwn"
+    with open(join(winning_dir, pass_filename), 'w') as fObj:
+        fObj.write("If you found me, you win! Run `/challenge/solve` and enter my filename when it asks!")
+
+    with open(DATA_FILE, 'w') as fObj:
+        fObj.write(join(winning_dir, pass_filename))
+
+    
+
+def main():
+    # Set up challenge
+    # Create a bunch of dirs that they need to traverse through to find 
+    # a file that has a specific name which they will need to supply 
+    # to get the flag
+    if not exists(DATA_FILE):
+        print("Setting up challenge...")
+        setup_game()
+        print("""
+            Traveling through linux directories is a very simple task!
+            To start off, a directory is just a folder where files, or
+            even other folders are stored.
+
+            On the linux command line, since you don't have a graphical
+            user interface, all of your operations need to be done by 
+            typing commands.
+
+            The first command you need to know is 'ls'. The 'ls' command
+            simply lists the contents of the directory you are currently in.
+            If you want to know what directory you are currently in, you can
+            type the 'pwd' command. This stands for 'print working directory.'
+
+            The second command you need to know is 'cd'. The 'cd' command
+            stands for 'change directory'. It allows you to move through
+            directories on linux to find the files you need.
+
+            For this challenge you will need to change directories into 
+            the /tmp directory by typing 'cd /tmp'. From there you can
+            run 'ls' to list it's contents. You will then see a directory
+            named 'starthere'. You can then run 'cd starthere' to enter that
+            directory. 
+
+            From here your goal is to look around the different directories
+            within the starthere directory to find a file. That file will
+            have a name that looks like this 'pwn_{random_word}_{random_word}_pwn.
+
+            If you find yourself in a directory that is empty, type 'cd ..' to 
+            go back one directory and change your course! 
+
+            Then you can type '/challenge/solve' and enter the filename when 
+            prompted to get your flag!
+
+            Note: Type 'cd' without a directory name to return to your home 
+            directory. You can also use the '/' tolink together directory 
+            names, for example, "cd /tmp/starthere/...".
+            
+            Good luck!
+
+        """)
+    else:
+        print("Hopefully you found the right file!")
+        ans = input("Please give me the filename you found: ")
+        with open(DATA_FILE) as fObj:
+            data = fObj.read()
+        data = data.split('/')
+        if ans == data[-1]:
+            print("Correct! Here is your flag!")
+            with open("/flag", 'r') as fObj:
+                print(fObj.read())
+                return
+        else:
+            print("Not quite! Try again!")
+            return
+
+
+if __name__ == "__main__":
+    main()
+

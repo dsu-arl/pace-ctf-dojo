@@ -1,0 +1,58 @@
+#!/usr/bin/exec-suid --real -- /usr/bin/python -I
+
+import sys
+from os.path import join
+
+try:
+	USER_FILE = join('/home/hacker', sys.argv[1])
+except IndexError:
+	print("Please give me tha name of your python file like so\n")
+	print("/challenge/verify <your_python_file_name_here>")
+	exit(-1)
+
+# Read file lines and identify necessary lines
+with open(USER_FILE, 'r') as fObj:
+    code = [x.strip().replace(' ', '') for x in fObj.readlines() if x != "\n"]
+
+# Loop through code and find target lines
+class_def = False
+name = False
+age = False
+gender = False
+inst = False
+
+for line in code:
+	if "classStudent" in line:
+		class_def = True
+	if "self.name=name" in line:
+		name = True
+	if "self.age=age" in line:
+		age = True
+	if "self.gender=gender" in line:
+		gender = True
+
+instances = [x for x in code if "=Student(" in x]
+if len(instances) == 2:
+	if instances[0] != instances[1]:
+		inst = True
+
+if not class_def:
+	print("Please make sure to define your class appropriately! -> \"class Student:\"")
+	exit(0)
+if not name:
+	print("It looks like you didn't properly set the 'name' attribute in your class definition.")
+	exit(0)
+if not age:
+	print("It looks like you didn't properly set the 'age' attribute in your class definition.")
+	exit(0)
+if not gender:
+	print("It looks like you didn't properly set the 'gender' attribute in your class definition.")
+	exit(0)
+if not inst:
+	print("It appears you didn't create two unique instances of the Student class!")
+	exit(0)
+
+with open("/flag", 'r') as fObj:
+	print(fObj.read())
+
+

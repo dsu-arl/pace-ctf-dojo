@@ -1,0 +1,11 @@
+name: Python Math Operators
+challenges:
+  - id: math
+    name: Math Operators
+  - id: floor-division
+    name: Floor Division of Two Numbers
+  - id: geometry
+    name: Geometry
+  - id: comparison
+    name: Comparison Operators
+

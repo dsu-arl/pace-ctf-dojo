@@ -1,0 +1,1 @@
+In this challenge you will learn how to find specific pieces of information within a file. And find information when you don't know what file it's in. When you get into the Linux terminal run `/challenge/solve` to get your instructions.

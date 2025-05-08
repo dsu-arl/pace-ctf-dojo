@@ -1,0 +1,14 @@
+name: Python Webscraping
+challenges:
+  - id: requestsi
+    name: Requests Part I
+  - id: requestsii
+    name: Requests Part II
+  - id: requestsiii
+    name: Requests Part III
+  - id: beautifulsoupi
+    name: Beautifulsoup I
+  - id: beautifulsoupii
+    name: Beautifulsoup II
+  - id: beautifulsoupiii
+    name: Beautifulsoup III

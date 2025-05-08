@@ -1,0 +1,67 @@
+#!/usr/bin/exec-suid --real -- /usr/bin/python -I
+import sys
+import importlib.util
+from os.path import exists, join
+
+def import_module_by_path(module_path):
+   module_name = "custom_module"
+   spec = importlib.util.spec_from_file_location(module_name, module_path)
+   custom_module = importlib.util.module_from_spec(spec)
+   spec.loader.exec_module(custom_module)
+   return custom_module
+
+try:
+	USER_FILE = join('/home/hacker', sys.argv[1])
+except IndexError:
+	print("Please give me tha name of your python file like so\n")
+	print("/challenge/verify <your_python_file_name_here>")
+	exit(-1)
+
+if not exists(USER_FILE):
+	print("Error: That file doesn't seem to exist.")
+	exit(-1)
+
+try:
+	fish = import_module_by_path(USER_FILE) 
+except ImportError as e:
+	print(f"Failed to import data from {USER_FILE}.")
+	print(e)
+	exit(-1)
+
+f1 = fish.Fish('Green', 10, 'Bass')
+f2 = fish.Fish('Green', 12, 'Walleye')
+
+pass1 = False
+pass2 = False
+pass3 = False
+
+f1.swim()
+if f1.is_swimming:
+	f1.eat()
+	if f1.is_eating and not f1.is_swimming:
+		pass1 = True
+
+f2.swim()
+if f2.is_swimming:
+	f2.eat()
+	if f2.is_eating and not f2.is_swimming:
+		pass2 = True
+
+# Check that the user created two unique instances
+with open(USER_FILE, 'r') as fObj:
+    code = [x.strip().replace(' ', '') for x in fObj.readlines() if x != "\n"]
+    inst = [x for x in code if '=Fish(' in x]
+
+if len(inst) == 2:
+	if inst[0] != inst[1]:
+		pass3 = True
+
+if not pass1 and not pass2:
+	print("It appears your methods did not work properly. Please double check your work.")
+	exit(0)
+if not pass3:
+	print("I couldn't find two unique instances of the Fish class in your code!")
+	exit(0)
+
+with open('/flag', 'r') as fObj:
+	print(fObj.read())

@@ -1,0 +1,50 @@
+#!/usr/bin/exec-suid --real -- /usr/bin/python -I
+
+import sys
+from random import randint
+import importlib.util
+from os.path import exists, join
+
+def import_module_by_path(module_path):
+   module_name = "custom_module"
+   spec = importlib.util.spec_from_file_location(module_name, module_path)
+   custom_module = importlib.util.module_from_spec(spec)
+   spec.loader.exec_module(custom_module)
+   return custom_module
+
+try:
+	USER_FILE = join('/home/hacker', sys.argv[1])
+except IndexError:
+	print("Please give me tha name of your python file like so\n")
+	print("/challenge/verify <your_python_file_name_here>")
+	exit(-1)
+
+# Identify user file and import it
+if not exists(USER_FILE):
+	print("Error: That file doesn't seem to exist.")
+	exit(-1)
+
+try:
+	clock = import_module_by_path(USER_FILE)
+except ImportError as e:
+	print(f"Failed to import data from {USER_FILE}.")
+	print(e)
+	exit(-1)
+
+c = clock.Clock()
+
+c.set_time(8, 30)
+
+if c.hours != 8 or c.minutes != 30:
+	print("Failed to set the time properly!")
+	exit(0)
+
+c.set_time(43, 71)
+
+if c.hours == 43 and c.minutes == 71:
+	print("Failed to validate time properly!")
+	exit(0)
+
+print("Congratulations! Your clock appears to work!")
+with open('/flag', 'r') as fObj:
+	print(fObj.read())

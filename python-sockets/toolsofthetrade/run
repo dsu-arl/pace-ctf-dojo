@@ -1,0 +1,40 @@
+#!/opt/pwn.college/python
+import argparse
+
+def main():
+
+    if args.filename == '':
+        print("Please supply the full path to your python file.")
+        exit(0)
+
+    with open(args.filename, 'r') as fObj:
+        data = [x.strip() for x in fObj.readlines()]
+
+    # All of these must be hit.
+    code = [
+            'importsocket', 
+            'socket.socket(socket.AF_INET,socket.SOCK_STREAM)', 
+            '.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)', 
+            '.bind', 
+            '.listen', 
+    ]
+
+    for line in data:
+        line = line.replace(' ', '')
+        print(line)
+        for c in code:
+            if c in line:
+                print(f'Found {c} in line -> {line}')
+                code.remove(c)
+
+    if len(code) == 0:
+        with open('/flag', 'r') as fObj:
+            print(f'{fObj.read()}')
+    else:
+        print("Your code doesn't look right.")
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("filename", type=str, default='', help="Direct path to your python file.")
+    args = parser.parse_args()
+    main()

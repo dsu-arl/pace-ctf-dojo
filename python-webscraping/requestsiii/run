@@ -1,0 +1,23 @@
+#!/opt/pwn.college/python
+from flask import Flask, request
+
+app = Flask(__name__)
+with open("/flag", "r") as fObj:
+    flag = fObj.read()
+
+wrong_agent = '<p>Wrong user agent!</p>\n'
+
+def correct_user_agent(agent) -> bool:
+    if 'python-requests' in agent:
+        return True
+    return False
+
+@app.route("/", methods=['GET', 'POST'])
+def requests_three():
+    if request.method == 'GET' and correct_user_agent(request.headers.get('User-Agent')):
+        return "<h1>hello</h1>"
+    elif request.method == 'POST' and correct_user_agent(request.headers.get('User-Agent')):
+        data = request.get_json()
+        return f"Here's the data you sent via a POST Request: {data}\n{flag}"
+
+app.run("challenge.localhost", 80)

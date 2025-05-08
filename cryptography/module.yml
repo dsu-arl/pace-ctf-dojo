@@ -1,10 +1,10 @@
 name: Cryptography
 challenges:
 - id: caesar-cipher-encryption
-  name: Caesar Cipher Encryption
+  name: Caesar Cipher Encoding
   allow_privileged: false
 - id: caesar-cipher-decryption
-  name: Caesar Cipher Decryption
+  name: Caesar Cipher Decoding
   allow_privileged: false
 - id: caesar-cipher-scripting
   name: Caesar Cipher Scripting
@@ -13,13 +13,11 @@ challenges:
   name: Caesar Cipher Brute Force
   allow_privileged: false
 - id: substitution-cipher-encryption
-  name: Substitution Cipher Encryption
+  name: Substitution Cipher Encoding
   allow_privileged: false
 - id: substitution-cipher-decryption
-  name: Substitution Cipher Decryption
+  name: Substitution Cipher Decoding
   allow_privileged: false
-- id: questionable-des
-  name: Questionable DES
 - id: ascii-encoding
   name: ASCII Encoding
   allow_privileged: false
@@ -32,3 +30,5 @@ challenges:
 - id: binary-decoding
   name: Binary Decoding
   allow_privileged: false
+- id: questionable-des
+  name: Questionable DES

@@ -1,0 +1,20 @@
+name: Start Here!
+challenges:
+- id: vscode
+  name: Using the VSCode Workspace
+  allow_privileged: false
+- id: file
+  name: Make a File in VSCode
+  allow_privileged: false
+- id: edit
+  name: Edit a File in VSCode
+  allow_privileged: false
+- id: using-the-gui-desktop
+  name: Using the GUI Desktop
+  allow_privileged: false
+- id: pasting-into-the-desktop
+  name: Pasting into the Desktop
+  allow_privileged: false
+- id: challenge
+  name: Running Challenges
+  allow_privileged: false

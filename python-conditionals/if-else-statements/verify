@@ -1,0 +1,50 @@
+#!/opt/pwn.college/python
+import sys
+import os
+import re
+
+sys.path.append('/challenge')
+from pacePythonTester import ExecutionAgent as ex
+
+def print_flag():
+    try:
+        with open("/flag", "r") as f:
+            print(f.read())
+    except FileNotFoundError:
+        print("Error: Flag file not found.")
+
+def run_and_check_script(user_script_path):
+
+    for a in [1,2,11,183]:
+        odd = re.compile('odd', re.IGNORECASE)
+        even = re.compile('even', re.IGNORECASE)
+
+        correct, incorrect = (odd,even) if a % 2 else (even,odd)
+
+        # Run their program with the test case
+        try:
+            stdout, stderr = ex.run(user_script_path, input=f"{a}\n")
+        except TypeError as e:
+            """ Issue with noneType return """
+            print("Error:", e)
+            exit()
+
+        if not re.search(correct, stdout.strip()):
+            print(f"Error: Make sure that you are printing if the number is 'odd' or 'even'")
+            exit()
+
+        # Make sure they aren't just printing both odd and even
+        if re.search(incorrect, stdout.strip()):
+            print(f"Error: You must print 'odd' or 'even' for the number, not both")
+            exit()
+
+    print_flag()
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: run <user_script.py>")
+        sys.exit(1)
+
+    user_script_path = sys.argv[1]
+    run_and_check_script(user_script_path)

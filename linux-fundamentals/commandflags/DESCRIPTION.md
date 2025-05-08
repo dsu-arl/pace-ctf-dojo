@@ -1,0 +1,1 @@
+In this challenge you will learn how to find out system information on the command line, as well as how to use flags with commands! You will also find out how to learn a new command you know nothing about! You can start the VSCode workspace, open a terminal, and run `/challenge/solve` to get your instructions.

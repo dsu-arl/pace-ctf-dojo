@@ -1,0 +1,39 @@
+#!/opt/pwn.college/python
+
+import grp
+import pwd
+
+def print_instructions():
+    print("""
+    Another day, another email! Good 'ol William Kiffin
+    has emailed you again asking you to add his user account to a new group.
+
+        Dear beloved System Administrator,
+
+        I am trying to use the "docker" command on my computer, but it's not
+        working unless I run it as administrator! Could you add my user to the "docker"
+        group please?
+
+        Sincerely,
+        William Kiffin
+
+        P.S. My account name is 'wkiffin'.
+
+    Use the 'usermod' command to add the 'wkiffin' user to the 'docker' group!
+
+          'usermod -aG docker wkiffin'
+
+    When you're done, run /challenge/solve again to get your flag!
+    """)
+
+def main():
+    group_info = grp.getgrnam("docker")
+    user_info = pwd.getpwnam("wkiffin")
+
+    if "wkiffin" in group_info.gr_mem or user_info.pw_gid == group_info.gr_gid:
+        print(open("/flag", "r").read())
+    else:
+        print_instructions()
+
+if __name__ == "__main__":
+    main()

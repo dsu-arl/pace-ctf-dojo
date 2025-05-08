@@ -1,0 +1,4 @@
+#!/bin/sh
+
+echo "Please append to this file!" > /home/hacker/append_to_me.txt
+chown hacker:hacker /home/hacker/append_to_me.txt

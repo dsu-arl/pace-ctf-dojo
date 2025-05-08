@@ -1,12 +1,16 @@
 id: ctf
 name: CTF
 modules:
+- id: start-here
+  name: Start Here!
+- id: linux-fundamentals
+  name: Linux Fundamentals
+- id: linux-admin
+  name: Linux Admin
 - id: cryptography
   name: Cryptography
 - id: steganography
   name: Steganography
-- id: testing
-  name: Testing
 - id: exploitation
   name: Exploitation
 - id: web
@@ -15,3 +19,23 @@ modules:
 - id: reverse-engineering
   name: Reverse Engineering
   image: whatupdoc6130/pwncollege:stringsv1
+- id: osint
+  name: OSINT
+- id: python-input-and-output
+  name: Python Input and Output
+- id: python-math-operators
+  name: Python Math Operators
+- id: python-conditionals
+  name: Python Conditionals
+- id: python-loops
+  name: Python Loops
+- id: python-functions
+  name: Python Functions
+- id: python-file-io
+  name: Python File I/O
+- id: python-sockets
+  name: Python Sockets
+- id: python-webscraping
+  name: Python Webscraping
+- id: python-objects
+  name: Python Objects
