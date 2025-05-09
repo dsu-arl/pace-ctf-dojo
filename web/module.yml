@@ -1,8 +1,23 @@
 name: web
 challenges:
-  - id: am-i-admin
-    name: Am I Admin?
-  - id: am-i-admin-2
-    name: Am I Admin?
-  - id: forceful-browsing
-    name: Forceful Browsing
+- id: am-i-admin
+  name: Am I Admin?
+  image: copsahl/pwncollege-web
+- id: am-i-admin-2
+  name: Am I Admin?
+  image: copsahl/pwncollege-web
+- id: forceful-browsing
+  name: Forceful Browsing
+  image: copsahl/pwncollege-web
+- id: textbox-fun
+  name: Textbox Fun
+  allow_privileged: false
+- id: eco-friendly
+  name: Eco Friendly
+  allow_privileged: false
+- id: directory-of-cool-dudes
+  name: Directory of Cool Dudes
+  allow_privileged: false
+- id: cross-contamination
+  name: Cross-Contamination
+  allow_privileged: false

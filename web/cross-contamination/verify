@@ -1,0 +1,204 @@
+#!/usr/bin/exec-suid --real -- /usr/bin/python -I
+import sys
+sys.path.append('/challenge')
+
+def print_flag():
+    try:
+        with open("/flag", "r") as f:
+            flag = f.read()
+            print(flag)
+            return flag
+    except FileNotFoundError:
+        print("Error: Flag file not found.")
+
+# Add your imports and other code below here
+from flask import Flask, request, render_template_string, redirect, url_for, jsonify, render_template
+import urllib.parse
+import json
+import bleach
+
+app = Flask(__name__)
+
+
+# example cool dudes
+examplePerson1 = {
+    "name": "Jenny Sparks",
+    "info": {
+        "about": "Loves electricity and thinks lightning is misunderstood.",
+        "likes": "Tesla coils, thunderstorms, neon signs",
+        "dislikes": "Paper cuts, weak magnets, bad puns"
+    }
+}
+
+examplePerson2 = {
+    "name": "Dr. Maple",
+    "info": {
+        "about": "A chill professor who always carries maple syrup in her bag.",
+        "likes": "Pancakes, jazz music, crossword puzzles",
+        "dislikes": "Loud noises, burnt toast, fast fashion"
+    }
+}
+
+examplePerson3 = {
+    "name": "Captain Fog",
+    "info": {
+        "about": "Former sailor turned poet, speaks mostly in metaphors.",
+        "likes": "Stormy weather, lighthouses, sea shanties",
+        "dislikes": "Landlocked cities, plastic bottles, bananas"
+    }
+}
+
+examplePerson4 = {
+    "name": "Mr. Ross",
+    "info": {
+        "about": '''This guy is <b>RADICAL</b> and knows everything there is to know about <span style="color: red">C</span><span style="color: blue">O</span><span style="color: orange">L</span><span style="color: green">O</span><span style="color: purple">R</span>!''',
+        "likes": "Painting, trees (happy), squirrels",
+        "dislikes": "Brutalist architecture, his afro (keep this on the DL)"
+    }
+}
+
+examplePerson5 = {
+    "name": "Professor Gumshoe",
+    "info": {
+        "about": "World’s leading expert on bubble gum archaeology.",
+        "likes": "Ancient wrappers, pink things, detective novels",
+        "dislikes": "Mint flavor, museums without gift shops, flat soda"
+    }
+}
+
+examplePerson6 = {
+    "name": "Tina Blink",
+    "info": {
+        "about": "She once blinked for 12 hours straight to win a bet.",
+        "likes": "Staring contests, modern art, sunflower seeds",
+        "dislikes": "Unblinking dolls, small spoons, ketchup"
+    }
+}
+
+examplePerson7 = {
+    "name": "Uncle Vinnie",
+    "info": {
+        "about": "Has a story for everything, none of them believable.",
+        "likes": "Old maps, garage sales, root beer floats",
+        "dislikes": "Digital clocks, pigeons, unsolicited advice"
+    }
+}
+
+examplePerson8 = {
+    "name": "Marla Byte",
+    "info": {
+        "about": "Claims she can debug code with her mind.",
+        "likes": "Binary jokes, coffee at 3am, keyboard clacks",
+        "dislikes": "Touch screens, slow Wi-Fi, low battery alerts"
+    }
+}
+
+examplePerson9 = {
+    "name": "Waldo Flex",
+    "info": {
+        "about": "No one can ever find him, even in his own house.",
+        "likes": "Hide-and-seek, optical illusions, stripes",
+        "dislikes": "Being tagged in photos, GPS, loud shirts"
+    }
+}
+
+examplePerson10 = {
+    "name": "Grandma Zoom",
+    "info": {
+        "about": "Rides a motorbike and knits at 120 mph.",
+        "likes": "Speed knitting, techno music, hot cocoa",
+        "dislikes": "Red lights, tangled yarn, slow walkers"
+    }
+}
+
+examplePerson11 = {
+    "name": "Echo Luna",
+    "info": {
+        "about": "Speaks only in rhymes and sometimes backwards.",
+        "likes": "Poetry slams, caves, full moons",
+        "dislikes": "Straightforward answers, clocks ticking, the number seven"
+    }
+}
+
+
+
+examplePeople = [examplePerson1, examplePerson2, examplePerson3, examplePerson4, examplePerson5, examplePerson6, examplePerson7, examplePerson8, examplePerson9, examplePerson10, examplePerson11]
+directory = {}
+
+def sanitize_html(html):
+    try:
+        return bleach.clean(html, tags=[], strip=True)
+    except:
+        newDict = {}
+        for k,v in html.items():
+            k = bleach.clean(k, tags=[], strip=True)
+            v = bleach.clean(v, tags=[], strip=True)
+            newDict[k] = v
+        return newDict
+
+@app.route("/")
+def index():
+    return render_template("index.html", directory=directory)
+
+@app.route('/call-python', methods=['POST'])
+def call_python():
+	result = print_flag()
+	return jsonify({'flag': result})
+
+@app.route("/add", methods=["POST"])
+def add_person():
+    name = sanitize_html(request.form.get("name").strip())
+    bio = sanitize_html(request.form.get("bio").strip())
+    likes = sanitize_html(request.form.get("likes").strip())
+    dislikes = sanitize_html(request.form.get("dislikes").strip())
+    if name in directory:
+        name = name + " (Duplicate Dude)"
+    if name and bio and likes and dislikes:
+        directory[name] = {"about": bio, "likes": likes, "dislikes": dislikes}
+    return redirect(url_for("index"))
+
+@app.route("/update-person", methods=["POST"])
+def update_person():
+    data = request.get_json(force=True)
+    name = data["name"]
+
+    # add new user data
+    k,v = data.popitem()
+    k = sanitize_html(k)
+    v = sanitize_html(v)
+
+    directory[name][k]=v
+    
+    info = directory.get(name, -1)
+
+
+    if(info == -1):
+        return render_template("error.html")
+    bio = info["about"]
+    likes = info["likes"]
+    dislikes = info["dislikes"]
+    return render_template("person.html", personInfo=info, name=name)
+
+
+
+@app.route("/get-directory")
+def get_directory():
+    return jsonify(directory)
+
+
+@app.route("/person/<name>")
+def person_page(name):
+    info = directory.get(name, -1)
+    if(info == -1):
+        return render_template("error.html")
+    bio = info["about"]
+    likes = info["likes"]
+    dislikes = info["dislikes"]
+    return render_template("person.html", personInfo=info, name=name)
+
+if __name__ == "__main__":
+    for person in examplePeople:
+        directory[person["name"]] = person["info"]
+    app.run()
+
+

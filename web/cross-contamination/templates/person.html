@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ name }}'s Page</title>
+</head>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+
+<body>
+    <h1>{{ name }}</h1>
+    {% for key, value in personInfo.items() %}
+    <p><b>{{ key.capitalize() }}:</b> {{ value | safe }}</p>
+    {% endfor %}
+    <a href="/">Back to Directory</a>
+</body>
+</html>

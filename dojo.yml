@@ -11,7 +11,6 @@ modules:
   name: Exploitation
 - id: web
   name: Web
-  image: copsahl/pwncollege-web
 - id: reverse-engineering
   name: Reverse Engineering
   image: whatupdoc6130/pwncollege:stringsv1

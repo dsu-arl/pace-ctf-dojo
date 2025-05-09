@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>People Directory</title>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</head>
+<body>
+    <h1>Add a Cool Dude below! </h1>
+    <p>(The Cool Dudes directory has been updated! Now you can update existing dudes with new categories, and you can view an example dude if it helps out too!)</p>
+   <div style="display: flex; gap: 20px; margin-top: 20px;">
+        <div style="flex: 1;">
+            <h3>Add a Dude!</h3>
+            <form method="post" action="/add">
+                <input type="text" name="name" placeholder="Name" required></br>
+                <input type="text" name="likes" placeholder="Likes" required></br>
+                <input type="text" name="dislikes" placeholder="Dislikes" required></br>
+                <textarea name="bio" placeholder="Bio" required></textarea></br>
+
+                <button type="submit">Add Dude!</button>
+            </form>
+
+            <h3>Update a Dude!</h3>
+            <label for="selectPerson">Select a Dude:</label>
+            <form id="updateForm">
+                <select name="selectPerson" id="selectPerson">
+                    <option value="" disabled selected required></option>
+                    {% for name in directory.keys() %}
+                        <option value="{{ name }}">{{ name }}</option>
+                    {% endfor %}
+                </select></br>
+                <input type="text" name="item" placeholder="New info category" required></br>
+                <textarea name="info" placeholder="New info" required></textarea></br>
+
+                <button type="submit">Update Dude!</button>
+        </form>
+            <h2>Directory</h2>
+            <ul>
+                {% for name in directory.keys() %}
+                    <li><a href="/person/{{ name }}">{{ name }}</a></li>
+                {% endfor %}
+            </ul>
+            <button id="loadExampleBtn">Load Example Dude</button>
+        </div>
+
+        <div id="examplePersonContainer" style="flex: 1; border-left: 2px solid #ccc; padding-left: 20px;">
+            <h2>Example Dude</h2>
+            <h3 id="exampleName"></h3>
+            <p id="exampleAbout"></p>
+            <p id="exampleLikes"></p>
+            <p id="exampleDislikes"></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("loadExampleBtn").addEventListener("click", function () {
+            const person = createPerson(0, 0, 0, 0, true);  // `test=true`
+
+            document.getElementById("exampleName").innerText = person.name;
+            document.getElementById("exampleAbout").innerHTML = "<b>About:</b> " + person.about;
+            document.getElementById("exampleLikes").innerHTML = "<b>Likes:</b> " + person.likes;
+            document.getElementById("exampleDislikes").innerHTML = "<b>Dislikes:</b> " + person.dislikes;
+        });
+        loadDirectory().then(directory => {
+            document.getElementById('updateForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                let select = document.getElementById("selectPerson");
+                let name = select.value;
+                let info = directory[name];
+                updatePerson(event, info, name); 
+                alert("Dude Updated!");
+            }); 
+        });
+    </script>
+</body>
+</html>
